@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hesaplama Araçları</title>
+    <link rel="icon" type="image/png" href="GE Logo Saydam.png">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: #121212; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+        .card { background-color: #1e1e1e; width: 100%; max-width: 420px; padding: 20px; border-radius: 16px; border: 1px solid #E87D0A; position: relative; }
+        
+        /* Header Yapısı */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .history-btn { background: #2a2a2a; border: 1px solid #3a3a3a; color: #E87D0A; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; font-size: 1.2rem; position: relative; display: flex; justify-content: center; align-items: center; }
+        .badge { position: absolute; top: -5px; right: -5px; background: #E87D0A; color: #fff; font-size: 0.7rem; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        
+        .logo-container { flex-grow: 1; text-align: center; }
+        .logo-container img { max-width: 130px; height: auto; display: inline-block; vertical-align: middle; }
+        .header-spacer { width: 40px; } /* Logonun tam ortalanması için boşluk dengeleyici */
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 10px; background: #2a2a2a; color: #aaa; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { background: #E87D0A; color: #fff; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 4px; font-size: 0.85rem; color: #aaa; }
+        input, select { width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; color: #fff; font-size: 0.95rem; }
+        .result-box { margin-top: 15px; padding: 15px; background: #E87D0A; border-radius: 8px; text-align: center; color: #fff; }
+        .result-value { font-size: 1.4rem; font-weight: bold; margin: 5px 0; }
+        .result-details { font-size: 0.85rem; text-align: left; border-top: 1px dashed rgba(255,255,255,0.4); padding-top: 8px; margin-top: 8px; }
+        .action-btn { width: 100%; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #fff; color: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .footer { text-align: center; font-size: 0.8rem; color: #666; margin-top: 15px; }
+        
+        /* Modal */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:100; }
+        .modal-content { background:#1e1e1e; width:90%; max-width:380px; border-radius:12px; padding:15px; max-height:80vh; overflow-y:auto; border:1px solid #E87D0A; }
+        .item { background:#2a2a2a; border-left:3px solid #E87D0A; padding:10px; margin-bottom:8px; border-radius:4px; position:relative; }
+        .del-btn { position:absolute; right:10px; top:10px; background:none; border:none; color:#ff5555; cursor:pointer; font-size:1.1rem; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <button class="history-btn" id="btnHistory">⏱️ <span class="badge" id="badgeCount">0</span></button>
+        
+        <div class="logo-container">
+            <img src="GE Logo Saydam.png" alt="ENERGE Logo">
+        </div>
+
+        <div class="header-spacer"></div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="btnGunes" onclick="tabSec('gunes')">Güneş Paneli</button>
+        <button class="tab-btn" id="btnKosegen" onclick="tabSec('kosegen')">Köşegen</button>
+    </div>
+
+    <!-- Güneş Paneli -->
+    <div id="secGunes" class="tab-content active">
+        <div class="input-group">
+            <label>Panel Genişliği (cm)</label>
+            <input type="number" id="pGen" value="113.5" oninput="runGunes()">
+        </div>
+        <div class="input-group">
+            <label>Panel Gücü (Watt)</label>
+            <input type="number" id="pWatt" value="550" oninput="runGunes()">
+        </div>
+        <div class="input-group">
+            <label>Toplam Panel Sayısı</label>
+            <input type="number" id="pAdet" value="20" oninput="runGunes()">
+        </div>
+        <div class="input-group">
+            <label>Sıra Sayısı</label>
+            <input type="number" id="pSira" value="1" oninput="runGunes()">
+        </div>
+        <div class="input-group">
+            <label>Kanat Boyu (cm)</label>
+            <input type="number" id="pKanat" value="50" oninput="runGunes()">
+        </div>
+        <div class="input-group">
+            <label>Ayak Açıklığı (cm)</label>
+            <input type="number" id="pAyak" value="250" oninput="runGunes()">
+        </div>
+
+        <div class="result-box">
+            <div>Toplam Aşık Boyu</div>
+            <div class="result-value" id="outGunesBoy">0 cm</div>
+            <div class="result-details" id="outGunesDetay"></div>
+            <button class="action-btn" onclick="saveData()">💾 Kaydet</button>
+        </div>
+    </div>
+
+    <!-- Köşegen -->
+    <div id="secKosegen" class="tab-content">
+        <div class="input-group">
+            <label>Birim</label>
+            <select id="kBirim" onchange="runKosegen()">
+                <option value="mm">mm</option>
+                <option value="cm" selected>cm</option>
+                <option value="m">m</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>1. Kenar</label>
+            <input type="number" id="k1" placeholder="5" oninput="runKosegen()">
+        </div>
+        <div class="input-group">
+            <label>2. Kenar</label>
+            <input type="number" id="k2" placeholder="10" oninput="runKosegen()">
+        </div>
+        <div class="result-box">
+            <div>Köşegen (Çapraz)</div>
+            <div class="result-value" id="outKosegen">0 cm</div>
+        </div>
+    </div>
+
+    <div class="footer">ENERGE - Güneş Enerji Sistemleri</div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="myModal">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3>Geçmiş Kayıtlar</h3>
+            <button onclick="closeModal()" style="background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;">✕</button>
+        </div>
+        <div id="listArea"></div>
+        <button class="action-btn" style="background:#552222; border:1px solid #ff5555; margin-top:10px;" onclick="clearAll()">Tümünü Sil</button>
+    </div>
+</div>
+
+<script>
+    var currentCalc = null;
+
+    window.onload = function() {
+        runGunes();
+        updateUI();
+        
+        document.getElementById('btnHistory').onclick = openModal;
+    };
+
+    function tabSec(target) {
+        document.getElementById('secGunes').classList.remove('active');
+        document.getElementById('secKosegen').classList.remove('active');
+        document.getElementById('btnGunes').classList.remove('active');
+        document.getElementById('btnKosegen').classList.remove('active');
+
+        if(target === 'gunes') {
+            document.getElementById('secGunes').classList.add('active');
+            document.getElementById('btnGunes').classList.add('active');
+            runGunes();
+        } else {
+            document.getElementById('secKosegen').classList.add('active');
+            document.getElementById('btnKosegen').classList.add('active');
+            runKosegen();
+        }
+    }
+
+    function runKosegen() {
+        var u = document.getElementById('kBirim').value;
+        var a = parseFloat(document.getElementById('k1').value) || 0;
+        var b = parseFloat(document.getElementById('k2').value) || 0;
+        var res = document.getElementById('outKosegen');
+        if(a > 0 && b > 0) {
+            res.innerText = Math.sqrt((a*a)+(b*b)).toFixed(2) + " " + u;
+        } else {
+            res.innerText = "0 " + u;
+        }
+    }
+
+    function runGunes() {
+        var g = parseFloat(document.getElementById('pGen').value) || 0;
+        var w = parseFloat(document.getElementById('pWatt').value) || 0;
+        var n = parseInt(document.getElementById('pAdet').value) || 0;
+        var s = parseInt(document.getElementById('pSira').value) || 0;
+        var k = parseFloat(document.getElementById('pKanat').value) || 0;
+        var a = parseFloat(document.getElementById('pAyak').value) || 0;
+
+        if(g > 0 && n > 0 && s > 0) {
+            var yanYana = Math.ceil(n / (2 * s));
+            var kwp = (n * w) / 1000;
+            var dizilim = (yanYana * g) + ((yanYana - 1) * 2) + 10;
+            var toplamCm = dizilim + (k * 2);
+            var toplamM = (toplamCm / 100).toFixed(2);
+
+            document.getElementById('outGunesBoy').innerText = toplamCm.toFixed(1) + " cm (" + toplamM + " m)";
+            document.getElementById('outGunesDetay').innerHTML = 
+                "• Güç: <strong>" + kwp.toFixed(2) + " kWp</strong><br>" +
+                "• Yan Yana: <strong>" + yanYana + " adet</strong><br>" +
+                "• Toplam Aşık: <strong>" + (s * 4) + " adet</strong>";
+
+            currentCalc = {
+                title: toplamCm.toFixed(1) + " cm | " + kwp.toFixed(2) + " kWp",
+                sub: n + " Panel (" + w + "W) - " + s + " Sıra"
+            };
+        }
+    }
+
+    function saveData() {
+        if(!currentCalc) return;
+        var data = JSON.parse(localStorage.getItem('ges_data') || '[]');
+        data.unshift(currentCalc);
+        if(data.length > 10) data.pop();
+        localStorage.setItem('ges_data', JSON.stringify(data));
+        updateUI();
+        alert("Kaydedildi!");
+    }
+
+    function updateUI() {
+        var data = JSON.parse(localStorage.getItem('ges_data') || '[]');
+        document.getElementById('badgeCount').innerText = data.length;
+        var box = document.getElementById('listArea');
+        box.innerHTML = '';
+
+        if(data.length === 0) {
+            box.innerHTML = '<div style="text-align:center; color:#888;">Kayıt yok</div>';
+            return;
+        }
+
+        for(var i=0; i<data.length; i++) {
+            (function(idx) {
+                var d = data[idx];
+                var el = document.createElement('div');
+                el.className = 'item';
+                el.innerHTML = '<strong>' + d.title + '</strong><br><small style="color:#aaa">' + d.sub + '</small>' +
+                               '<button class="del-btn" onclick="delOne(event,' + idx + ')">🗑️</button>';
+                el.onclick = function(e) {
+                    if(e.target.className !== 'del-btn') {
+                        var text = d.title + "\n" + d.sub;
+                        var t = document.createElement("textarea");
+                        t.value = text;
+                        document.body.appendChild(t);
+                        t.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(t);
+                        alert("Panoya Kopyalandı!");
+                    }
+                };
+                box.appendChild(el);
+            })(i);
+        }
+    }
+
+    function delOne(e, idx) {
+        e.stopPropagation();
+        var data = JSON.parse(localStorage.getItem('ges_data') || '[]');
+        data.splice(idx, 1);
+        localStorage.setItem('ges_data', JSON.stringify(data));
+        updateUI();
+    }
+
+    function clearAll() {
+        if(confirm("Hepsini silmek istediğinize emin misiniz?")) {
+            localStorage.removeItem('ges_data');
+            updateUI();
+        }
+    }
+
+    function openModal() { document.getElementById('myModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('myModal').style.display = 'none'; }
+</script>
+</body>
+</html>
