@@ -174,7 +174,7 @@
         }
     </style>
 </head>
-<body>
+<body onload="hesaplaGunes()">
 
     <div class="card">
         <!-- Logo -->
@@ -184,40 +184,12 @@
 
         <!-- Sekme Geçiş Butonları -->
         <div class="tabs">
-            <button class="tab-btn active" onclick="sekmeDegistir('kosegen')">Köşegen</button>
-            <button class="tab-btn" onclick="sekmeDegistir('gunes')">Güneş Paneli</button>
+            <button class="tab-btn active" onclick="sekmeDegistir('gunes')">Güneş Paneli</button>
+            <button class="tab-btn" onclick="sekmeDegistir('kosegen')">Köşegen</button>
         </div>
 
-        <!-- 1. SEKME: KÖŞEGEN HESAPLAYICI -->
-        <div id="tab-kosegen" class="tab-content active">
-            <div class="unit-selector">
-                <select id="birimSelect" class="unit-select" onchange="birimDegisti()">
-                    <option value="mm">mm</option>
-                    <option value="cm" selected>cm</option>
-                    <option value="m">m</option>
-                </select>
-            </div>
-
-            <h1 style="padding-right: 40px;">Köşegen Hesaplayıcı</h1>
-
-            <div class="input-group">
-                <label id="label1" for="kenar1">1. Kenar Uzunluğu (cm)</label>
-                <input type="tel" id="kenar1" placeholder="Örn: 5" inputmode="decimal" onfocus="this.select()" oninput="hesaplaKosegen()">
-            </div>
-
-            <div class="input-group">
-                <label id="label2" for="kenar2">2. Kenar Uzunluğu (cm)</label>
-                <input type="tel" id="kenar2" placeholder="Örn: 10" inputmode="decimal" onfocus="this.select()" oninput="hesaplaKosegen()">
-            </div>
-
-            <div class="result-box">
-                <div class="result-title">Köşegen (Çapraz)</div>
-                <div class="result-value" id="sonucKosegen">0 cm</div>
-            </div>
-        </div>
-
-        <!-- 2. SEKME: GÜNEŞ PANELİ VE AŞIK HESAPLAYICI -->
-        <div id="tab-gunes" class="tab-content">
+        <!-- 1. SEKME: GÜNEŞ PANELİ VE AŞIK HESAPLAYICI (VARSAYILAN) -->
+        <div id="tab-gunes" class="tab-content active">
             <h1>Güneş Paneli Hesaplayıcı</h1>
 
             <div class="input-group">
@@ -266,6 +238,34 @@
                 </div>
             </div>
         </div>
+
+        <!-- 2. SEKME: KÖŞEGEN HESAPLAYICI -->
+        <div id="tab-kosegen" class="tab-content">
+            <div class="unit-selector">
+                <select id="birimSelect" class="unit-select" onchange="birimDegisti()">
+                    <option value="mm">mm</option>
+                    <option value="cm" selected>cm</option>
+                    <option value="m">m</option>
+                </select>
+            </div>
+
+            <h1 style="padding-right: 40px;">Köşegen Hesaplayıcı</h1>
+
+            <div class="input-group">
+                <label id="label1" for="kenar1">1. Kenar Uzunluğu (cm)</label>
+                <input type="tel" id="kenar1" placeholder="Örn: 5" inputmode="decimal" onfocus="this.select()" oninput="hesaplaKosegen()">
+            </div>
+
+            <div class="input-group">
+                <label id="label2" for="kenar2">2. Kenar Uzunluğu (cm)</label>
+                <input type="tel" id="kenar2" placeholder="Örn: 10" inputmode="decimal" onfocus="this.select()" oninput="hesaplaKosegen()">
+            </div>
+
+            <div class="result-box">
+                <div class="result-title">Köşegen (Çapraz)</div>
+                <div class="result-value" id="sonucKosegen">0 cm</div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -273,13 +273,14 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-            if(sekme === 'kosegen') {
+            if(sekme === 'gunes') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('tab-kosegen').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
                 document.getElementById('tab-gunes').classList.add('active');
                 hesaplaGunes();
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('tab-kosegen').classList.add('active');
+                hesaplaKosegen();
             }
         }
 
