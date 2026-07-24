@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hesaplama Araçları</title>
+    <link rel="icon" type="image/png" href="GE Logo Saydam.png">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            position: relative;
+            background-color: #1e1e1e;
+            width: 100%;
+            max-width: 420px;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            border: 1px solid #E87D0A;
+        }
+
+        /* Logo Alanı */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-container img {
+            max-width: 140px;
+            height: auto;
+            display: inline-block;
+        }
+
+        /* Sekme Butonları */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #3a3a3a;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background-color: #2a2a2a;
+            color: #a0a0a0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background-color: #E87D0A;
+            color: #ffffff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Birim Seçici */
+        .unit-selector {
+            position: absolute;
+            top: 155px;
+            right: 25px;
+        }
+
+        .unit-select {
+            background-color: #2a2a2a;
+            color: #ffffff;
+            border: 1px solid #3a3a3a;
+            border-radius: 6px;
+            padding: 6px 24px 6px 10px;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='%23ffffff' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: #a0a0a0;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background-color: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: #E87D0A;
+        }
+
+        /* Sonuç Kutusu */
+        .result-box {
+            margin-top: 20px;
+            padding: 16px;
+            background-color: #E87D0A;
+            border: 1px solid #f5ff00;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .result-title {
+            font-size: 0.8rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .result-value {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .result-details {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #ffffff;
+            border-top: 1px dashed rgba(255,255,255,0.4);
+            padding-top: 8px;
+            text-align: left;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- Logo -->
+        <div class="logo-container">
+            <img src="GE Logo Saydam.png" alt="Logo">
+        </div>
+
+        <!-- Sekme Geçiş Butonları -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="sekmeDegistir('kosegen')">Köşegen</button>
+            <button class="tab-btn" onclick="sekmeDegistir('gunes')">Güneş Paneli</button>
+        </div>
+
+        <!-- 1. SEKME: KÖŞEGEN HESAPLAYICI -->
+        <div id="tab-kosegen" class="tab-content active">
+            <div class="unit-selector">
+                <select id="birimSelect" class="unit-select" onchange="birimDegisti()">
+                    <option value="mm">mm</option>
+                    <option value="cm" selected>cm</option>
+                    <option value="m">m</option>
+                </select>
+            </div>
+
+            <h1 style="padding-right: 40px;">Köşegen Hesaplayıcı</h1>
+
+            <div class="input-group">
+                <label id="label1" for="kenar1">1. Kenar Uzunluğu (cm)</label>
+                <input type="tel" id="kenar1" placeholder="Örn: 5" inputmode="decimal" onfocus="this.select()" oninput="hesaplaKosegen()">
+            </div>
+
+            <div class="input-group">
+                <label id="label2" for="kenar2">2. Kenar Uzunluğu (cm)</label>
+                <input type="tel" id="kenar2" placeholder="Örn: 10" inputmode="decimal" onfocus="this.select()" oninput="hesaplaKosegen()">
+            </div>
+
+            <div class="result-box">
+                <div class="result-title">Köşegen (Çapraz)</div>
+                <div class="result-value" id="sonucKosegen">0 cm</div>
+            </div>
+        </div>
+
+        <!-- 2. SEKME: GÜNEŞ PANELİ VE AŞIK HESAPLAYICI -->
+        <div id="tab-gunes" class="tab-content">
+            <h1>Güneş Paneli Hesaplayıcı</h1>
+
+            <div class="input-group">
+                <label for="panelGenislik">Panel Genişliği (cm)</label>
+                <input type="tel" id="panelGenislik" value="113.5" inputmode="decimal" onfocus="this.select()" oninput="hesaplaGunes()">
+            </div>
+
+            <div class="input-group">
+                <label for="panelWatt">Panel Gücü (Watt)</label>
+                <input type="tel" id="panelWatt" value="550" inputmode="numeric" onfocus="this.select()" oninput="hesaplaGunes()">
+            </div>
+
+            <div class="input-group">
+                <label for="toplamPanelSayisi">Toplam Panel Sayısı</label>
+                <input type="tel" id="toplamPanelSayisi" value="20" inputmode="numeric" onfocus="this.select()" oninput="hesaplaGunes()">
+            </div>
+
+            <div class="input-group">
+                <label for="siraSayisi">Sıra Sayısı (Altlı-Üstlü Bloklar)</label>
+                <input type="tel" id="siraSayisi" value="1" inputmode="numeric" onfocus="this.select()" oninput="hesaplaGunes()">
+            </div>
+
+            <div class="input-group">
+                <label for="kanatBoyu">Tek Taraf Kanat Boyu / Aşık Taşması (cm)</label>
+                <input type="tel" id="kanatBoyu" value="50" inputmode="decimal" onfocus="this.select()" oninput="hesaplaGunes()">
+            </div>
+
+            <div class="input-group">
+                <label for="ayakMesafe">İki Ayak / Kiriş Arası Açıklık (cm)</label>
+                <input type="tel" id="ayakMesafe" value="300" inputmode="decimal" onfocus="this.select()" oninput="hesaplaGunes()">
+            </div>
+
+            <div class="result-box">
+                <div class="result-title">Toplam Aşık Boyu (Uçtan Uca)</div>
+                <div class="result-value" id="toplamGenislik">0 cm</div>
+                
+                <div class="result-details" id="panelDetaylar">
+                    • Sistem Toplam Gücü: 0 kWp<br>
+                    • Yan Yana Panel Sayısı: 0 adet<br>
+                    • Toplam Panel: 0 adet<br>
+                    • Toplam Aşık Sayısı: 0 adet<br>
+                    • Toplam Sonlandırıcı (5cm): 0 adet<br>
+                    • Toplam Ara Tutucu (2cm): 0 adet<br>
+                    • Gereken Ayak Çifti / Kiriş: 0 adet<br>
+                    • Çift Taraf Kanat Taşması: 0 cm
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sekmeDegistir(sekme) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            if(sekme === 'kosegen') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('tab-kosegen').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('tab-gunes').classList.add('active');
+                hesaplaGunes();
+            }
+        }
+
+        /* KÖŞEGEN MANTIĞI */
+        function birimDegisti() {
+            const birim = document.getElementById('birimSelect').value;
+            document.getElementById('label1').innerText = `1. Kenar Uzunluğu (${birim})`;
+            document.getElementById('label2').innerText = `2. Kenar Uzunluğu (${birim})`;
+            hesaplaKosegen();
+        }
+
+        function hesaplaKosegen() {
+            const birim = document.getElementById('birimSelect').value;
+            const raw1 = document.getElementById('kenar1').value.replace(',', '.');
+            const raw2 = document.getElementById('kenar2').value.replace(',', '.');
+            
+            const a = parseFloat(raw1);
+            const b = parseFloat(raw2);
+            const sonucEkrani = document.getElementById('sonucKosegen');
+
+            if (!isNaN(a) && !isNaN(b) && a > 0 && b > 0) {
+                const kosegen = Math.sqrt((a * a) + (b * b));
+                sonucEkrani.innerText = kosegen.toFixed(2).replace('.', ',') + " " + birim;
+            } else {
+                sonucEkrani.innerText = "0 " + birim;
+            }
+        }
+
+        /* GÜNEŞ PANELİ MANTIĞI */
+        function hesaplaGunes() {
+            const genislik = parseFloat(document.getElementById('panelGenislik').value.replace(',', '.')) || 0;
+            const watt = parseFloat(document.getElementById('panelWatt').value.replace(',', '.')) || 0;
+            const toplamPanel = parseInt(document.getElementById('toplamPanelSayisi').value) || 0;
+            const sira = parseInt(document.getElementById('siraSayisi').value) || 0;
+            const kanat = parseFloat(document.getElementById('kanatBoyu').value.replace(',', '.')) || 0;
+            const ayakAciklik = parseFloat(document.getElementById('ayakMesafe').value.replace(',', '.')) || 0;
+
+            if (genislik > 0 && toplamPanel > 0 && sira > 0) {
+                const panelYanYana = Math.ceil(toplamPanel / (2 * sira));
+                const toplamAsik = sira * 4;
+                const toplamSonlandirici = sira * 8;
+                
+                const toplamKwp = (toplamPanel * watt) / 1000;
+                
+                let toplamAraTutucu = Math.max(0, toplamPanel - (4 * sira));
+
+                const isTekSayi = (toplamPanel % 2 !== 0);
+                if (isTekSayi) {
+                    toplamAraTutucu = Math.max(0, toplamAraTutucu - 2);
+                }
+
+                const siraAraBosluk = Math.max(0, panelYanYana - 1);
+                const panelDizilimCm = (panelYanYana * genislik) + (siraAraBosluk * 2) + (2 * 5);
+                
+                const toplamAsikBoyuCm = panelDizilimCm + (kanat * 2);
+                const toplamAsikBoyuM = (toplamAsikBoyuCm / 100).toFixed(2).replace('.', ',');
+
+                let ayakCiftiSayisi = 0;
+                if (ayakAciklik > 0) {
+                    const netKirisMesafe = panelDizilimCm; 
+                    const aciklikSayisi = Math.ceil(netKirisMesafe / ayakAciklik);
+                    ayakCiftiSayisi = (aciklikSayisi + 1) * sira;
+                }
+
+                document.getElementById('toplamGenislik').innerText = `${toplamAsikBoyuCm.toFixed(1).replace('.', ',')} cm (${toplamAsikBoyuM} m)`;
+                
+                const tekSayiNotu = isTekSayi ? ' <span style="font-size:0.75rem; opacity:0.9;">(Tek sayı panel düzeltmesi: -2 adet)</span>' : '';
+
+                document.getElementById('panelDetaylar').innerHTML = `
+                    • Sistem Toplam Gücü: <strong>${toplamKwp.toFixed(2).replace('.', ',')} kWp</strong> (${watt}W × ${toplamPanel})<br>
+                    • Yan Yana Panel Sayısı: <strong>${panelYanYana} adet</strong> (Sıra başı)<br>
+                    • Toplam Panel: <strong>${toplamPanel} adet</strong><br>
+                    • Toplam Aşık Sayısı: <strong>${toplamAsik} adet</strong> (${sira} sıra × 4)<br>
+                    • Toplam Sonlandırıcı (5cm): <strong>${toplamSonlandirici} adet</strong> (${sira} sıra × 8)<br>
+                    • Toplam Ara Tutucu (2cm): <strong>${toplamAraTutucu} adet</strong>${tekSayiNotu}<br>
+                    • Gereken Ayak Çifti (Kiriş): <strong>${ayakCiftiSayisi} adet</strong> (${sira} sıra)<br>
+                    • Çift Taraf Kanat Taşması: <strong>${(kanat * 2).toFixed(1).replace('.', ',')} cm</strong> (${kanat}cm × 2)
+                `;
+            } else {
+                document.getElementById('toplamGenislik').innerText = "0 cm";
+                document.getElementById('panelDetaylar').innerHTML = "Lütfen geçerli değerler girin.";
+            }
+        }
+    </script>
+
+</body>
+</html>
