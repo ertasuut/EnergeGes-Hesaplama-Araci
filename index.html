@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hesaplama Araçları</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #121212; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
-        .card { background-color: #1e1e1e; width: 100%; max-width: 420px; padding: 20px; border-radius: 16px; border: 1px solid #E87D0A; position: relative; }
+        html, body { width: 100%; min-height: 100vh; background-color: #121212; color: #e0e0e0; }
+        body { display: flex; justify-content: center; align-items: center; padding: 15px; }
+        
+        .card { background-color: #1e1e1e; width: 100%; max-width: 420px; padding: 20px; border-radius: 16px; border: 1px solid #E87D0A; position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .history-btn { background: #2a2a2a; border: 1px solid #3a3a3a; color: #E87D0A; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; font-size: 1.2rem; position: relative; display: flex; justify-content: center; align-items: center; }
@@ -30,25 +33,31 @@
 
         .profile-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
         .profile-row input { flex: 1; }
-        .btn-del-row { background: #ff5555; color: #fff; border: none; border-radius: 6px; width: 36px; height: 38px; cursor: pointer; font-weight: bold; }
+        .btn-del-row { background: #ff5555; color: #fff; border: none; border-radius: 6px; width: 36px; height: 38px; cursor: pointer; font-weight: bold; flex-shrink: 0; }
         .btn-add-row { width: 100%; background: #2a2a2a; border: 1px dashed #E87D0A; color: #E87D0A; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 12px; }
 
         .result-box { margin-top: 15px; padding: 15px; background: #E87D0A; border-radius: 8px; text-align: center; color: #fff; }
         .result-value { font-size: 1.4rem; font-weight: bold; margin: 5px 0; }
         .result-details { font-size: 0.85rem; text-align: left; border-top: 1px dashed rgba(255,255,255,0.4); padding-top: 8px; margin-top: 8px; line-height: 1.5; }
-        .action-btn { width: 100%; margin-top: 8px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #fff; color: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        
+        .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+        .action-btn { flex: 1; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid #fff; color: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
         .footer { text-align: center; font-size: 0.8rem; color: #666; margin-top: 15px; }
         
         .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:100; }
-        .modal-content { background:#1e1e1e; width:90%; max-width:380px; border-radius:12px; padding:15px; max-height:80vh; overflow-y:auto; border:1px solid #E87D0A; }
-        .item { background:#2a2a2a; border-left:3px solid #E87D0A; padding:10px; margin-bottom:8px; border-radius:4px; position:relative; }
+        .modal-content { background:#1e1e1e; width:90%; max-width:400px; border-radius:12px; padding:15px; max-height:80vh; overflow-y:auto; border:1px solid #E87D0A; }
+        .item { background:#2a2a2a; border-left:3px solid #E87D0A; padding:12px; margin-bottom:10px; border-radius:6px; position:relative; }
+        .item-title { font-weight: bold; color: #fff; font-size: 0.95rem; }
+        .item-sub { color: #aaa; font-size: 0.8rem; margin-top: 4px; white-space: pre-line; line-height: 1.4; }
+        .item-actions { display: flex; gap: 6px; margin-top: 8px; }
+        .item-btn { padding: 6px 10px; background: #3a3a3a; border: 1px solid #555; color: #fff; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
     </style>
 </head>
 <body>
 
 <div class="card" id="mainCard">
     <div class="header">
-        <button class="history-btn" id="btnHistory" onclick="openModal()">📒 <span class="badge" id="badgeCount">0</span></button>
+        <button type="button" class="history-btn" id="btnHistory">📒 <span class="badge" id="badgeCount">0</span></button>
         <div class="logo-container">
             <img src="GE Logo Saydam.png" alt="ENERGE Logo" onerror="this.style.display='none'">
         </div>
@@ -56,14 +65,14 @@
     </div>
 
     <div class="tabs">
-        <button class="tab-btn active" id="btnGunes" onclick="switchTab('gunes')">Güneş Paneli</button>
-        <button class="tab-btn" id="btnKosegen" onclick="switchTab('kosegen')">Köşegen</button>
+        <button type="button" class="tab-btn active" id="btnGunes">Güneş Paneli</button>
+        <button type="button" class="tab-btn" id="btnKosegen">Köşegen</button>
     </div>
 
     <div id="secGunes" class="tab-content active">
         <div class="input-group">
             <label>Hazır Panel Tipi</label>
-            <select id="pTip" onchange="panelTipDegisti()">
+            <select id="pTip">
                 <option value="550">550W (Genişlik: 113.4 cm)</option>
                 <option value="585">585W (Genişlik: 113.4 cm)</option>
                 <option value="custom">Özel Ölçü Girişi</option>
@@ -71,41 +80,40 @@
         </div>
         <div class="input-group" id="grpOzelGenislik" style="display: none;">
             <label>Panel Genişliği (cm)</label>
-            <input type="number" id="pGen" value="113.4" step="any" onkeyup="runGunes()" onchange="runGunes()">
+            <input type="number" id="pGen" value="113.4" step="any">
         </div>
         <div class="input-group">
             <label>Panel Gücü (Watt)</label>
-            <input type="number" id="pWatt" value="550" onkeyup="runGunes()" onchange="runGunes()">
+            <input type="number" id="pWatt" value="550">
         </div>
         <div class="input-group">
             <label>Toplam Panel Sayısı</label>
-            <input type="number" id="pAdet" value="20" onkeyup="runGunes()" onchange="runGunes()">
+            <input type="number" id="pAdet" value="20">
         </div>
         <div class="input-group">
             <label>Sıra Sayısı (Altlı-Üstlü Bloklar)</label>
-            <input type="number" id="pSira" value="1" onkeyup="runGunes()" onchange="runGunes()">
+            <input type="number" id="pSira" value="1">
         </div>
 
-        <!-- MANUEL DİNAMİK AŞIK BOYU SEÇİM ALANI -->
         <div class="input-group">
             <label>Stoktaki Aşık Profilleri (Boy ve Adet)</label>
             <div id="asikContainer">
                 <div class="profile-row">
-                    <input type="number" class="asik-boy" placeholder="Boy (m)" value="6" step="any" onkeyup="runGunes()" onchange="runGunes()">
-                    <input type="number" class="asik-adet" placeholder="Adet" value="4" onkeyup="runGunes()" onchange="runGunes()">
-                    <button class="btn-del-row" onclick="removeProfileRow(this)">✕</button>
+                    <input type="number" class="asik-boy" placeholder="Boy (m)" value="6" step="any">
+                    <input type="number" class="asik-adet" placeholder="Adet" value="4">
+                    <button type="button" class="btn-del-row">✕</button>
                 </div>
             </div>
-            <button class="btn-add-row" onclick="addProfileRow()">＋ Aşık Boyu Ekle</button>
+            <button type="button" class="btn-add-row" id="btnAddProfile">＋ Aşık Boyu Ekle</button>
         </div>
 
         <div class="input-group">
             <label>Tek Taraf Kanat Boyu / Aşık Taşması (cm)</label>
-            <input type="number" id="pKanat" value="50" step="any" onkeyup="runGunes()" onchange="runGunes()">
+            <input type="number" id="pKanat" value="50" step="any">
         </div>
         <div class="input-group">
             <label>İki Ayak / Kiriş Arası Açıklık (cm)</label>
-            <input type="number" id="pAyak" value="250" step="any" onkeyup="runGunes()" onchange="runGunes()">
+            <input type="number" id="pAyak" value="250" step="any">
         </div>
 
         <div class="result-box">
@@ -113,15 +121,18 @@
             <div class="result-value" id="outGunesBoy">0 cm</div>
             <div class="result-details" id="outGunesDetay"></div>
             
-            <button class="action-btn" onclick="saveData()">💾 Hesaplamayı Kaydet</button>
-            <button class="action-btn" onclick="copyTextSummary()">📋 Metin Kopya</button>
+            <div class="btn-group">
+                <button type="button" class="action-btn" id="btnSave">💾 Kaydet</button>
+                <button type="button" class="action-btn" id="btnCopy">📋 Kopyala</button>
+                <button type="button" class="action-btn" id="btnDownload">🖼️ Kart İndir</button>
+            </div>
         </div>
     </div>
 
     <div id="secKosegen" class="tab-content">
         <div class="input-group">
             <label>Birim</label>
-            <select id="kBirim" onchange="runKosegen()">
+            <select id="kBirim">
                 <option value="mm">mm</option>
                 <option value="cm" selected>cm</option>
                 <option value="m">m</option>
@@ -129,11 +140,11 @@
         </div>
         <div class="input-group">
             <label>1. Kenar Uzunluğu</label>
-            <input type="number" id="k1" placeholder="5" step="any" onkeyup="runKosegen()" onchange="runKosegen()">
+            <input type="number" id="k1" placeholder="5" step="any">
         </div>
         <div class="input-group">
             <label>2. Kenar Uzunluğu</label>
-            <input type="number" id="k2" placeholder="10" step="any" onkeyup="runKosegen()" onchange="runKosegen()">
+            <input type="number" id="k2" placeholder="10" step="any">
         </div>
         <div class="result-box">
             <div>Köşegen (Çapraz)</div>
@@ -146,69 +157,18 @@
 
 <div class="modal" id="myModal">
     <div class="modal-content">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <h3>Kayıtlı Hesaplamalar</h3>
-            <button onclick="closeModal()" style="background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;">✕</button>
+            <button type="button" id="btnCloseModal" style="background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;">✕</button>
         </div>
         <div id="listArea"></div>
-        <button class="action-btn" style="background:#2a1a1a; border:1px solid #552222; color:#ff5555; margin-top:10px;" onclick="clearAll()">🗑️ Tümünü Sil</button>
+        <button type="button" class="action-btn" id="btnClearAll" style="width:100%; background:#2a1a1a; border:1px solid #552222; color:#ff5555; margin-top:10px;">🗑️ Tümünü Sil</button>
     </div>
 </div>
 
 <script>
+window.addEventListener('DOMContentLoaded', function() {
     var currentCalc = null;
-
-    function addProfileRow() {
-        var container = document.getElementById("asikContainer");
-        var row = document.createElement("div");
-        row.className = "profile-row";
-        row.innerHTML = '<input type="number" class="asik-boy" placeholder="Boy (m)" step="any" onkeyup="runGunes()" onchange="runGunes()">' +
-                        '<input type="number" class="asik-adet" placeholder="Adet" onkeyup="runGunes()" onchange="runGunes()">' +
-                        '<button class="btn-del-row" onclick="removeProfileRow(this)">✕</button>';
-        container.appendChild(row);
-        runGunes();
-    }
-
-    function removeProfileRow(btn) {
-        var row = btn.parentNode;
-        row.parentNode.removeChild(row);
-        runGunes();
-    }
-
-    function panelTipDegisti() {
-        var val = document.getElementById("pTip").value;
-        var ozelGrup = document.getElementById("grpOzelGenislik");
-
-        if (val === "550") {
-            document.getElementById("pGen").value = 113.4;
-            document.getElementById("pWatt").value = 550;
-            ozelGrup.style.display = "none";
-        } else if (val === "585") {
-            document.getElementById("pGen").value = 113.4;
-            document.getElementById("pWatt").value = 585;
-            ozelGrup.style.display = "none";
-        } else if (val === "custom") {
-            ozelGrup.style.display = "block";
-        }
-        runGunes();
-    }
-
-    function switchTab(target) {
-        document.getElementById("secGunes").className = "tab-content";
-        document.getElementById("secKosegen").className = "tab-content";
-        document.getElementById("btnGunes").className = "tab-btn";
-        document.getElementById("btnKosegen").className = "tab-btn";
-
-        if (target === "gunes") {
-            document.getElementById("secGunes").className = "tab-content active";
-            document.getElementById("btnGunes").className = "tab-btn active";
-            runGunes();
-        } else {
-            document.getElementById("secKosegen").className = "tab-content active";
-            document.getElementById("btnKosegen").className = "tab-btn active";
-            runKosegen();
-        }
-    }
 
     function runKosegen() {
         var u = document.getElementById("kBirim").value;
@@ -230,7 +190,6 @@
         var kanat = parseFloat(document.getElementById("pKanat").value) || 0;
         var ayakAciklik = parseFloat(document.getElementById("pAyak").value) || 0;
 
-        // Stok Profilleri Toplama
         var boyInputs = document.querySelectorAll(".asik-boy");
         var adetInputs = document.querySelectorAll(".asik-adet");
         var stokMetreMetraj = 0;
@@ -276,13 +235,13 @@
 
             document.getElementById("outGunesBoy").innerText = toplamAsikBoyuCm.toFixed(1) + " cm (" + toplamAsikBoyuM.toFixed(2) + " m)";
             
-            var tekSayiNotu = isTekSayi ? ' <span style="font-size:0.75rem; opacity:0.8;">(Tek sayı panel)</span>' : '';
+            var tekSayiNotu = isTekSayi ? ' (Tek sayı panel)' : '';
             var stokMetni = stokListesiMetin.length > 0 ? stokListesiMetin.join(", ") : "Girilmedi";
             var metrajDurumu = farkM >= 0 
-                ? '<span style="color:#aaffaa;">✓ Stok Yeterli (Artan: ' + farkM.toFixed(2) + ' m)</span>' 
-                : '<span style="color:#ffaaaa;">⚠ Stok Yetersiz (Eksik: ' + Math.abs(farkM).toFixed(2) + ' m)</span>';
+                ? '✓ Stok Yeterli (Artan: ' + farkM.toFixed(2) + ' m)' 
+                : '⚠ Stok Yetersiz (Eksik: ' + Math.abs(farkM).toFixed(2) + ' m)';
 
-            document.getElementById("outGunesDetay").innerHTML = 
+            var detailHTML = 
                 '• Sistem Toplam Gücü: <strong>' + toplamKwp.toFixed(2) + ' kWp</strong> (' + watt + 'W × ' + toplamPanel + ')<br>' +
                 '• Yan Yana Panel Sayısı: <strong>' + panelYanYana + ' adet</strong><br>' +
                 '• Toplam Aşık Hat Sayısı: <strong>' + toplamAsik + ' hat</strong> (' + sira + ' sıra × 4)<br>' +
@@ -294,21 +253,107 @@
                 '• Gereken Ayak Çifti: <strong>' + ayakCiftiSayisi + ' adet</strong><br>' +
                 '• Çift Taraf Kanat Taşması: <strong>' + (kanat * 2).toFixed(1) + ' cm</strong>';
 
+            document.getElementById("outGunesDetay").innerHTML = detailHTML;
+
             currentCalc = {
                 title: toplamAsikBoyuCm.toFixed(1) + " cm | " + toplamKwp.toFixed(2) + " kWp",
-                sub: toplamPanel + " Panel • Stok: " + stokMetreMetraj.toFixed(1) + "m / Gerekli: " + toplamGerekenMetrajM.toFixed(1) + "m"
+                details: detailHTML.replace(/<br>/g, "\n").replace(/<[^>]*>/g, "")
             };
         }
     }
 
+    function panelTipDegisti() {
+        var val = document.getElementById("pTip").value;
+        var ozelGrup = document.getElementById("grpOzelGenislik");
+
+        if (val === "550") {
+            document.getElementById("pGen").value = 113.4;
+            document.getElementById("pWatt").value = 550;
+            ozelGrup.style.display = "none";
+        } else if (val === "585") {
+            document.getElementById("pGen").value = 113.4;
+            document.getElementById("pWatt").value = 585;
+            ozelGrup.style.display = "none";
+        } else if (val === "custom") {
+            ozelGrup.style.display = "block";
+        }
+        runGunes();
+    }
+
+    function switchTab(target) {
+        document.getElementById("secGunes").className = "tab-content";
+        document.getElementById("secKosegen").className = "tab-content";
+        document.getElementById("btnGunes").className = "tab-btn";
+        document.getElementById("btnKosegen").className = "tab-btn";
+
+        if (target === "gunes") {
+            document.getElementById("secGunes").className = "tab-content active";
+            document.getElementById("btnGunes").className = "tab-btn active";
+            runGunes();
+        } else {
+            document.getElementById("secKosegen").className = "tab-content active";
+            document.getElementById("btnKosegen").className = "tab-btn active";
+            runKosegen();
+        }
+    }
+
+    function addProfileRow() {
+        var container = document.getElementById("asikContainer");
+        var row = document.createElement("div");
+        row.className = "profile-row";
+        
+        row.innerHTML = '<input type="number" class="asik-boy" placeholder="Boy (m)" step="any">' +
+                        '<input type="number" class="asik-adet" placeholder="Adet">' +
+                        '<button type="button" class="btn-del-row">✕</button>';
+        
+        container.appendChild(row);
+        runGunes();
+    }
+
+    function executeCopy(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert("Metin panoya kopyalandı!");
+            }).catch(function() {
+                fallbackCopy(text);
+            });
+        } else {
+            fallbackCopy(text);
+        }
+    }
+
+    function fallbackCopy(text) {
+        var t = document.createElement("textarea");
+        t.value = text;
+        t.style.position = "fixed";
+        t.style.opacity = "0";
+        document.body.appendChild(t);
+        t.select();
+        try {
+            document.execCommand("copy");
+            alert("Metin panoya kopyalandı!");
+        } catch (e) {
+            alert("Kopyalama başarısız oldu.");
+        }
+        document.body.removeChild(t);
+    }
+
     function saveData() {
         if (!currentCalc) return;
-        var data = JSON.parse(localStorage.getItem("ges_data") || "[]");
+        var data = [];
+        try {
+            data = JSON.parse(localStorage.getItem("ges_data") || "[]");
+        } catch(e) { data = []; }
+        
         data.unshift(currentCalc);
         if (data.length > 10) data.pop();
-        localStorage.setItem("ges_data", JSON.stringify(data));
+        
+        try {
+            localStorage.setItem("ges_data", JSON.stringify(data));
+        } catch(e) {}
+        
         updateUI();
-        alert("Hesaplama kaydedildi.");
+        alert("Hesaplama geçmişe kaydedildi.");
     }
 
     function copyTextSummary() {
@@ -317,18 +362,29 @@
         var summary = "ENERGE GES HESAPLAMA ÖZETİ\n" +
                       "Toplam Aşık Boyu: " + boyText + "\n" +
                       detailsText;
-        
-        var t = document.createElement("textarea");
-        t.value = summary;
-        document.body.appendChild(t);
-        t.select();
-        document.execCommand("copy");
-        document.body.removeChild(t);
-        alert("Metin panoya kopyalandı!");
+        executeCopy(summary);
+    }
+
+    function downloadCardImage() {
+        var element = document.getElementById("mainCard");
+        if (typeof html2canvas !== "undefined") {
+            html2canvas(element, { backgroundColor: "#121212" }).then(function(canvas) {
+                var link = document.createElement("a");
+                link.download = "ges-hesaplama-kart.png";
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            });
+        } else {
+            alert("Görsel oluşturma kütüphanesi yüklenemedi.");
+        }
     }
 
     function updateUI() {
-        var data = JSON.parse(localStorage.getItem("ges_data") || "[]");
+        var data = [];
+        try {
+            data = JSON.parse(localStorage.getItem("ges_data") || "[]");
+        } catch(e) { data = []; }
+
         document.getElementById("badgeCount").innerText = data.length;
         var box = document.getElementById("listArea");
         box.innerHTML = "";
@@ -339,26 +395,35 @@
         }
 
         for (var i = 0; i < data.length; i++) {
-            var d = data[i];
-            var el = document.createElement("div");
-            el.className = "item";
-            el.innerHTML = '<strong>' + d.title + '</strong><br><small style="color:#aaa">' + d.sub + '</small>';
-            box.appendChild(el);
+            (function(index) {
+                var d = data[index];
+                var el = document.createElement("div");
+                el.className = "item";
+                el.innerHTML = 
+                    '<div class="item-title">' + d.title + '</div>' +
+                    '<div class="item-sub">' + d.details + '</div>' +
+                    '<div class="item-actions">' +
+                        '<button type="button" class="item-btn btn-copy-item">📋 Kopyala</button>' +
+                    '</div>';
+                
+                el.querySelector(".btn-copy-item").addEventListener("click", function() {
+                    var text = "ENERGE GES HESAPLAMA KAYDI\n" + d.title + "\n" + d.details;
+                    executeCopy(text);
+                });
+
+                box.appendChild(el);
+            })(i);
         }
     }
 
     function clearAll() {
         if (confirm("Tüm kayıtlar silinsin mi?")) {
-            localStorage.removeItem("ges_data");
+            try {
+                localStorage.removeItem("ges_data");
+            } catch(e) {}
             updateUI();
         }
     }
 
     function openModal() { document.getElementById("myModal").style.display = "flex"; }
-    function closeModal() { document.getElementById("myModal").style.display = "none"; }
-
-    panelTipDegisti();
-    updateUI();
-</script>
-</body>
-</html>
+   
