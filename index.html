@@ -34,13 +34,12 @@
             border: 1px solid #E87D0A;
         }
 
-        /* Üst Header ve Logo Alanı */
+        /* Upper Header Container */
         .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            position: relative;
         }
 
         .history-btn {
@@ -74,15 +73,20 @@
             align-items: center;
         }
 
+        /* Logo Alanı */
         .logo-container {
             flex-grow: 1;
             text-align: center;
         }
 
         .logo-container img {
-            max-width: 120px;
+            max-width: 130px;
             height: auto;
             display: inline-block;
+        }
+
+        .header-spacer {
+            width: 40px; /* Sağ tarafı dengelemek için boş alan */
         }
 
         /* Sekme Butonları */
@@ -96,13 +100,13 @@
 
         .tab-btn {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             background-color: #2a2a2a;
             color: #a0a0a0;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: bold;
             transition: all 0.2s;
         }
@@ -145,7 +149,7 @@
         }
 
         h1 {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             margin-bottom: 20px;
             text-align: center;
             color: #ffffff;
@@ -183,7 +187,7 @@
             margin-top: 20px;
             padding: 16px;
             background-color: #E87D0A;
-            border-radius: 12px;
+            border-radius: 8px;
             text-align: center;
         }
 
@@ -196,7 +200,7 @@
         }
 
         .result-value {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: bold;
             color: #ffffff;
         }
@@ -213,33 +217,33 @@
 
         .save-btn {
             width: 100%;
-            margin-top: 10px;
+            margin-top: 12px;
             padding: 8px;
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: rgba(0, 0, 0, 0.25);
             border: 1px solid rgba(255, 255, 255, 0.4);
-            color: #fff;
+            color: #ffffff;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
             font-size: 0.8rem;
         }
 
-        /* Footer */
+        /* Alt Yazı */
         .footer-text {
             text-align: center;
             font-size: 0.8rem;
-            color: #666;
+            color: #888888;
             margin-top: 20px;
         }
 
-        /* Modal / Geçmiş Penceresi */
+        /* Kayıt Geçmişi Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.75);
             display: none;
             justify-content: center;
             align-items: flex-end;
@@ -267,7 +271,7 @@
         .modal-close {
             background: none;
             border: none;
-            color: #fff;
+            color: #ffffff;
             font-size: 1.5rem;
             cursor: pointer;
         }
@@ -278,7 +282,6 @@
             padding: 12px;
             border-radius: 6px;
             margin-bottom: 10px;
-            position: relative;
             cursor: pointer;
         }
 
@@ -286,26 +289,25 @@
             display: flex;
             justify-content: space-between;
             font-size: 0.75rem;
-            color: #888;
+            color: #888888;
             margin-bottom: 4px;
         }
 
         .history-item-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
-            color: #fff;
+            color: #ffffff;
         }
 
         .history-item-sub {
             font-size: 0.8rem;
-            color: #aaa;
+            color: #aaaaaa;
             margin-top: 2px;
         }
 
         .delete-item {
             color: #ff5555;
             cursor: pointer;
-            font-size: 1rem;
         }
 
         .clear-all-btn {
@@ -324,18 +326,18 @@
 <body onload="init()">
 
     <div class="card">
-        <!-- Header / Logo Alanı -->
+        <!-- Üst Header & Logo -->
         <div class="header-container">
             <button class="history-btn" onclick="modalAc()">
                 ⏱️
                 <span class="badge" id="historyBadge">0</span>
             </button>
-            
+
             <div class="logo-container">
                 <img src="GE Logo Saydam.png" alt="Logo">
             </div>
 
-            <!-- Sağdaki boş alan kaldırıldı -->
+            <div class="header-spacer"></div>
         </div>
 
         <!-- Sekme Geçiş Butonları -->
@@ -344,7 +346,7 @@
             <button class="tab-btn" onclick="sekmeDegistir('kosegen')">Köşegen</button>
         </div>
 
-        <!-- 1. SEKME: GÜNEŞ PANELİ -->
+        <!-- 1. SEKME: GÜNEŞ PANELİ VE AŞIK HESAPLAYICI -->
         <div id="tab-gunes" class="tab-content active">
             <h1>Güneş Paneli Hesaplayıcı</h1>
 
@@ -387,7 +389,7 @@
             </div>
         </div>
 
-        <!-- 2. SEKME: KÖŞEGEN -->
+        <!-- 2. SEKME: KÖŞEGEN HESAPLAYICI -->
         <div id="tab-kosegen" class="tab-content">
             <div class="unit-selector">
                 <select id="birimSelect" class="unit-select" onchange="birimDegisti()">
@@ -415,13 +417,13 @@
             </div>
         </div>
 
-        <!-- Footer -->
+        <!-- Alt Yazı -->
         <div class="footer-text">
             ENERGE - Güneş Enerji Sistemleri
         </div>
     </div>
 
-    <!-- Kayıt Geçmişi Modali -->
+    <!-- Kayıt Geçmişi Modal -->
     <div class="modal-overlay" id="historyModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -456,6 +458,7 @@
             }
         }
 
+        /* KÖŞEGEN MANTIĞI */
         function birimDegisti() {
             const birim = document.getElementById('birimSelect').value;
             document.getElementById('label1').innerText = `1. Kenar Uzunluğu (${birim})`;
@@ -477,6 +480,7 @@
             }
         }
 
+        /* GÜNEŞ PANELİ MANTIĞI */
         function hesaplaGunes() {
             const genislik = parseFloat(document.getElementById('panelGenislik').value.replace(',', '.')) || 0;
             const watt = parseFloat(document.getElementById('panelWatt').value.replace(',', '.')) || 0;
@@ -508,14 +512,17 @@
 
                 document.getElementById('toplamGenislik').innerText = `${toplamAsikBoyuCm.toFixed(1).replace('.', ',')} cm (${toplamAsikBoyuM} m)`;
                 
-                const tekSayiNotu = isTekSayi ? ' <span style="font-size:0.75rem; opacity:0.9;">(Tek sayı düzeltmesi: -2)</span>' : '';
+                const tekSayiNotu = isTekSayi ? ' <span style="font-size:0.75rem; opacity:0.9;">(Tek sayı panel düzeltmesi: -2 adet)</span>' : '';
 
                 document.getElementById('panelDetaylar').innerHTML = `
-                    • Sistem Gücü: <strong>${toplamKwp.toFixed(2).replace('.', ',')} kWp</strong> (${watt}W × ${toplamPanel})<br>
-                    • Yan Yana Panel: <strong>${panelYanYana} adet</strong><br>
-                    • Toplam Aşık: <strong>${toplamAsik} adet</strong><br>
-                    • Sonlandırıcı: <strong>${toplamSonlandirici} adet</strong> | Ara Tutucu: <strong>${toplamAraTutucu} adet</strong>${tekSayiNotu}<br>
-                    • Gereken Ayak Çifti: <strong>${ayakCiftiSayisi} adet</strong>
+                    • Sistem Toplam Gücü: <strong>${toplamKwp.toFixed(2).replace('.', ',')} kWp</strong> (${watt}W × ${toplamPanel})<br>
+                    • Yan Yana Panel Sayısı: <strong>${panelYanYana} adet</strong> (Sıra başı)<br>
+                    • Toplam Panel: <strong>${toplamPanel} adet</strong><br>
+                    • Toplam Aşık Sayısı: <strong>${toplamAsik} adet</strong> (${sira} sıra × 4)<br>
+                    • Toplam Sonlandırıcı (5cm): <strong>${toplamSonlandirici} adet</strong> (${sira} sıra × 8)<br>
+                    • Toplam Ara Tutucu (2cm): <strong>${toplamAraTutucu} adet</strong>${tekSayiNotu}<br>
+                    • Gereken Ayak Çifti (Kiriş): <strong>${ayakCiftiSayisi} adet</strong> (${sira} sıra)<br>
+                    • Çift Taraf Kanat Taşması: <strong>${(kanat * 2).toFixed(1).replace('.', ',')} cm</strong> (${kanat}cm × 2)
                 `;
 
                 sonGunesHesap = {
@@ -526,17 +533,17 @@
             }
         }
 
-        /* VERİ KAYIT (LOCALSTORAGE) MANTIĞI */
+        /* VERİ KAYIT MANTIĞI (LOCALSTORAGE) */
         function kaydetGunes() {
             if (!sonGunesHesap) return;
             let kayitlar = JSON.parse(localStorage.getItem('hesapGecmisi') || '[]');
             
             kayitlar.unshift(sonGunesHesap);
-            if (kayitlar.length > 10) kayitlar.pop(); // Maksimum 10 kayıt
+            if (kayitlar.length > 10) kayitlar.pop();
             
             localStorage.setItem('hesapGecmisi', JSON.stringify(kayitlar));
             gecmisiGuncelleUI();
-            alert("Hesaplama kaydedildi.");
+            alert("Hesaplama başarıyla kaydedildi.");
         }
 
         function gecmisiGuncelleUI() {
@@ -557,12 +564,4 @@
                 div.className = 'history-item';
                 div.innerHTML = `
                     <div class="history-item-header">
-                        <span>#${kayitlar.length - index} • ${item.tarih}</span>
-                        <span class="delete-item" onclick="tekliSil(event, ${index})">🗑️</span>
-                    </div>
-                    <div class="history-item-title">${item.baslik}</div>
-                    <div class="history-item-sub">${item.detay}</div>
-                    <div style="font-size:0.7rem; color:#E87D0A; margin-top:4px;">📋 Panoya kopyalamak için dokunun</div>
-                `;
-                div.onclick = (e) => {
-                
+                        <span>#${kayitlar.length - index} • $
