@@ -34,14 +34,53 @@
             border: 1px solid #E87D0A;
         }
 
-        /* Logo Alanı */
-        .logo-container {
-            text-align: center;
+        /* Üst Header ve Logo Alanı */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
+            position: relative;
+        }
+
+        .history-btn {
+            background-color: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #E87D0A;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            font-size: 1.2rem;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #E87D0A;
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: bold;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-container {
+            flex-grow: 1;
+            text-align: center;
         }
 
         .logo-container img {
-            max-width: 140px;
+            max-width: 120px;
             height: auto;
             display: inline-block;
         }
@@ -57,13 +96,13 @@
 
         .tab-btn {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             background-color: #2a2a2a;
             color: #a0a0a0;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: bold;
             transition: all 0.2s;
         }
@@ -106,7 +145,7 @@
         }
 
         h1 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             margin-bottom: 20px;
             text-align: center;
             color: #ffffff;
@@ -144,8 +183,7 @@
             margin-top: 20px;
             padding: 16px;
             background-color: #E87D0A;
-            border: 1px solid #f5ff00;
-            border-radius: 8px;
+            border-radius: 12px;
             text-align: center;
         }
 
@@ -158,7 +196,7 @@
         }
 
         .result-value {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: #ffffff;
         }
@@ -172,14 +210,132 @@
             text-align: left;
             line-height: 1.4;
         }
+
+        .save-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Footer */
+        .footer-text {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 20px;
+        }
+
+        /* Modal / Geçmiş Penceresi */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-top: 2px solid #E87D0A;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .history-item {
+            background-color: #2a2a2a;
+            border-left: 4px solid #E87D0A;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .history-item-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .history-item-sub {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        .delete-item {
+            color: #ff5555;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .clear-all-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #2a1a1a;
+            border: 1px solid #552222;
+            color: #ff5555;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
-<body onload="hesaplaGunes()">
+<body onload="init()">
 
     <div class="card">
-        <!-- Logo -->
-        <div class="logo-container">
-            <img src="GE Logo Saydam.png" alt="Logo">
+        <!-- Header / Logo Alanı -->
+        <div class="header-container">
+            <button class="history-btn" onclick="modalAc()">
+                ⏱️
+                <span class="badge" id="historyBadge">0</span>
+            </button>
+            
+            <div class="logo-container">
+                <img src="GE Logo Saydam.png" alt="Logo">
+            </div>
+
+            <!-- Sağdaki boş alan kaldırıldı -->
         </div>
 
         <!-- Sekme Geçiş Butonları -->
@@ -188,7 +344,7 @@
             <button class="tab-btn" onclick="sekmeDegistir('kosegen')">Köşegen</button>
         </div>
 
-        <!-- 1. SEKME: GÜNEŞ PANELİ VE AŞIK HESAPLAYICI (VARSAYILAN) -->
+        <!-- 1. SEKME: GÜNEŞ PANELİ -->
         <div id="tab-gunes" class="tab-content active">
             <h1>Güneş Paneli Hesaplayıcı</h1>
 
@@ -226,20 +382,12 @@
                 <div class="result-title">Toplam Aşık Boyu (Uçtan Uca)</div>
                 <div class="result-value" id="toplamGenislik">0 cm</div>
                 
-                <div class="result-details" id="panelDetaylar">
-                    • Sistem Toplam Gücü: 0 kWp<br>
-                    • Yan Yana Panel Sayısı: 0 adet<br>
-                    • Toplam Panel: 0 adet<br>
-                    • Toplam Aşık Sayısı: 0 adet<br>
-                    • Toplam Sonlandırıcı (5cm): 0 adet<br>
-                    • Toplam Ara Tutucu (2cm): 0 adet<br>
-                    • Gereken Ayak Çifti / Kiriş: 0 adet<br>
-                    • Çift Taraf Kanat Taşması: 0 cm
-                </div>
+                <div class="result-details" id="panelDetaylar"></div>
+                <button class="save-btn" onclick="kaydetGunes()">💾 Hesaplamayı Kaydet</button>
             </div>
         </div>
 
-        <!-- 2. SEKME: KÖŞEGEN HESAPLAYICI -->
+        <!-- 2. SEKME: KÖŞEGEN -->
         <div id="tab-kosegen" class="tab-content">
             <div class="unit-selector">
                 <select id="birimSelect" class="unit-select" onchange="birimDegisti()">
@@ -266,9 +414,33 @@
                 <div class="result-value" id="sonucKosegen">0 cm</div>
             </div>
         </div>
+
+        <!-- Footer -->
+        <div class="footer-text">
+            ENERGE - Güneş Enerji Sistemleri
+        </div>
+    </div>
+
+    <!-- Kayıt Geçmişi Modali -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Kayıtlı Hesaplamalar (<span id="modalCount">0</span>/10)</h3>
+                <button class="modal-close" onclick="modalKapat()">&times;</button>
+            </div>
+            <div id="historyList"></div>
+            <button class="clear-all-btn" onclick="tumunuSil()">🗑️ Tümünü Sil</button>
+        </div>
     </div>
 
     <script>
+        let sonGunesHesap = null;
+
+        function init() {
+            hesaplaGunes();
+            gecmisiGuncelleUI();
+        }
+
         function sekmeDegistir(sekme) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -284,7 +456,6 @@
             }
         }
 
-        /* KÖŞEGEN MANTIĞI */
         function birimDegisti() {
             const birim = document.getElementById('birimSelect').value;
             document.getElementById('label1').innerText = `1. Kenar Uzunluğu (${birim})`;
@@ -294,14 +465,11 @@
 
         function hesaplaKosegen() {
             const birim = document.getElementById('birimSelect').value;
-            const raw1 = document.getElementById('kenar1').value.replace(',', '.');
-            const raw2 = document.getElementById('kenar2').value.replace(',', '.');
-            
-            const a = parseFloat(raw1);
-            const b = parseFloat(raw2);
+            const a = parseFloat(document.getElementById('kenar1').value.replace(',', '.')) || 0;
+            const b = parseFloat(document.getElementById('kenar2').value.replace(',', '.')) || 0;
             const sonucEkrani = document.getElementById('sonucKosegen');
 
-            if (!isNaN(a) && !isNaN(b) && a > 0 && b > 0) {
+            if (a > 0 && b > 0) {
                 const kosegen = Math.sqrt((a * a) + (b * b));
                 sonucEkrani.innerText = kosegen.toFixed(2).replace('.', ',') + " " + birim;
             } else {
@@ -309,7 +477,6 @@
             }
         }
 
-        /* GÜNEŞ PANELİ MANTIĞI */
         function hesaplaGunes() {
             const genislik = parseFloat(document.getElementById('panelGenislik').value.replace(',', '.')) || 0;
             const watt = parseFloat(document.getElementById('panelWatt').value.replace(',', '.')) || 0;
@@ -322,49 +489,80 @@
                 const panelYanYana = Math.ceil(toplamPanel / (2 * sira));
                 const toplamAsik = sira * 4;
                 const toplamSonlandirici = sira * 8;
-                
                 const toplamKwp = (toplamPanel * watt) / 1000;
                 
                 let toplamAraTutucu = Math.max(0, toplamPanel - (4 * sira));
-
                 const isTekSayi = (toplamPanel % 2 !== 0);
-                if (isTekSayi) {
-                    toplamAraTutucu = Math.max(0, toplamAraTutucu - 2);
-                }
+                if (isTekSayi) toplamAraTutucu = Math.max(0, toplamAraTutucu - 2);
 
                 const siraAraBosluk = Math.max(0, panelYanYana - 1);
                 const panelDizilimCm = (panelYanYana * genislik) + (siraAraBosluk * 2) + (2 * 5);
-                
                 const toplamAsikBoyuCm = panelDizilimCm + (kanat * 2);
                 const toplamAsikBoyuM = (toplamAsikBoyuCm / 100).toFixed(2).replace('.', ',');
 
                 let ayakCiftiSayisi = 0;
                 if (ayakAciklik > 0) {
-                    const netKirisMesafe = panelDizilimCm; 
-                    const aciklikSayisi = Math.ceil(netKirisMesafe / ayakAciklik);
+                    const aciklikSayisi = Math.ceil(panelDizilimCm / ayakAciklik);
                     ayakCiftiSayisi = (aciklikSayisi + 1) * sira;
                 }
 
                 document.getElementById('toplamGenislik').innerText = `${toplamAsikBoyuCm.toFixed(1).replace('.', ',')} cm (${toplamAsikBoyuM} m)`;
                 
-                const tekSayiNotu = isTekSayi ? ' <span style="font-size:0.75rem; opacity:0.9;">(Tek sayı panel düzeltmesi: -2 adet)</span>' : '';
+                const tekSayiNotu = isTekSayi ? ' <span style="font-size:0.75rem; opacity:0.9;">(Tek sayı düzeltmesi: -2)</span>' : '';
 
                 document.getElementById('panelDetaylar').innerHTML = `
-                    • Sistem Toplam Gücü: <strong>${toplamKwp.toFixed(2).replace('.', ',')} kWp</strong> (${watt}W × ${toplamPanel})<br>
-                    • Yan Yana Panel Sayısı: <strong>${panelYanYana} adet</strong> (Sıra başı)<br>
-                    • Toplam Panel: <strong>${toplamPanel} adet</strong><br>
-                    • Toplam Aşık Sayısı: <strong>${toplamAsik} adet</strong> (${sira} sıra × 4)<br>
-                    • Toplam Sonlandırıcı (5cm): <strong>${toplamSonlandirici} adet</strong> (${sira} sıra × 8)<br>
-                    • Toplam Ara Tutucu (2cm): <strong>${toplamAraTutucu} adet</strong>${tekSayiNotu}<br>
-                    • Gereken Ayak Çifti (Kiriş): <strong>${ayakCiftiSayisi} adet</strong> (${sira} sıra)<br>
-                    • Çift Taraf Kanat Taşması: <strong>${(kanat * 2).toFixed(1).replace('.', ',')} cm</strong> (${kanat}cm × 2)
+                    • Sistem Gücü: <strong>${toplamKwp.toFixed(2).replace('.', ',')} kWp</strong> (${watt}W × ${toplamPanel})<br>
+                    • Yan Yana Panel: <strong>${panelYanYana} adet</strong><br>
+                    • Toplam Aşık: <strong>${toplamAsik} adet</strong><br>
+                    • Sonlandırıcı: <strong>${toplamSonlandirici} adet</strong> | Ara Tutucu: <strong>${toplamAraTutucu} adet</strong>${tekSayiNotu}<br>
+                    • Gereken Ayak Çifti: <strong>${ayakCiftiSayisi} adet</strong>
                 `;
-            } else {
-                document.getElementById('toplamGenislik').innerText = "0 cm";
-                document.getElementById('panelDetaylar').innerHTML = "Lütfen geçerli değerler girin.";
+
+                sonGunesHesap = {
+                    baslik: `${toplamAsikBoyuCm.toFixed(1).replace('.', ',')} cm • ${toplamKwp.toFixed(2).replace('.', ',')} kWp`,
+                    detay: `${toplamPanel} panel × ${watt}W • ${sira} sıra • ${panelYanYana} yan yana`,
+                    tarih: new Date().toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                };
             }
         }
-    </script>
 
-</body>
-</html>
+        /* VERİ KAYIT (LOCALSTORAGE) MANTIĞI */
+        function kaydetGunes() {
+            if (!sonGunesHesap) return;
+            let kayitlar = JSON.parse(localStorage.getItem('hesapGecmisi') || '[]');
+            
+            kayitlar.unshift(sonGunesHesap);
+            if (kayitlar.length > 10) kayitlar.pop(); // Maksimum 10 kayıt
+            
+            localStorage.setItem('hesapGecmisi', JSON.stringify(kayitlar));
+            gecmisiGuncelleUI();
+            alert("Hesaplama kaydedildi.");
+        }
+
+        function gecmisiGuncelleUI() {
+            let kayitlar = JSON.parse(localStorage.getItem('hesapGecmisi') || '[]');
+            document.getElementById('historyBadge').innerText = kayitlar.length;
+            document.getElementById('modalCount').innerText = kayitlar.length;
+
+            const listElem = document.getElementById('historyList');
+            listElem.innerHTML = '';
+
+            if (kayitlar.length === 0) {
+                listElem.innerHTML = '<div style="color:#888; text-align:center; padding:20px;">Kayıtlı hesaplama bulunmuyor.</div>';
+                return;
+            }
+
+            kayitlar.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <div class="history-item-header">
+                        <span>#${kayitlar.length - index} • ${item.tarih}</span>
+                        <span class="delete-item" onclick="tekliSil(event, ${index})">🗑️</span>
+                    </div>
+                    <div class="history-item-title">${item.baslik}</div>
+                    <div class="history-item-sub">${item.detay}</div>
+                    <div style="font-size:0.7rem; color:#E87D0A; margin-top:4px;">📋 Panoya kopyalamak için dokunun</div>
+                `;
+                div.onclick = (e) => {
+                
