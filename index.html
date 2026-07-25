@@ -59,7 +59,7 @@
     <div class="header">
         <button type="button" class="history-btn" id="btnHistory">📒 <span class="badge" id="badgeCount">0</span></button>
         <div class="logo-container">
-            <img src="Gelogosaydam.png" alt="ENERGE Logo" id="mainLogo">
+            <img src="./gelogosaydam.png" alt="ENERGE Logo" id="mainLogo" onerror="this.style.display='none'">
         </div>
         <div class="header-spacer"></div>
     </div>
@@ -167,14 +167,7 @@
 </div>
 
 <script>
-window.addEventListener('load', function() {
-    var logo = document.getElementById("mainLogo");
-    if (logo) {
-        logo.onerror = function() {
-            this.style.display = 'none';
-        };
-    }
-
+(function() {
     var currentCalc = null;
 
     function runKosegen() {
@@ -428,4 +421,9 @@ window.addEventListener('load', function() {
             try {
                 localStorage.removeItem("ges_data");
             } catch(e) {}
-     
+            updateUI();
+        }
+    }
+
+    function openModal() { document.getElementById("myModal").style.display = "flex"; }
+    function closeModal() { docu
