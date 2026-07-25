@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ENERGE - Hesaplama Araçları</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
         html, body { width: 100%; min-height: 100vh; background-color: #121212; color: #e0e0e0; }
@@ -125,7 +124,6 @@
             <div class="btn-group">
                 <button type="button" class="action-btn" id="btnSaveData">💾 Kaydet</button>
                 <button type="button" class="action-btn" id="btnCopySummary">📋 Kopyala</button>
-                <button type="button" class="action-btn" id="btnDownloadCard">🖼️ Kart İndir</button>
             </div>
         </div>
     </div>
@@ -310,7 +308,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         '<input type="number" class="asik-adet" placeholder="Adet">' +
                         '<button type="button" class="btn-del-row" data-action="remove-row">✕</button>';
         container.appendChild(row);
-        bindDynamicInputs();
         runGunes();
     }
 
@@ -353,20 +350,6 @@ document.addEventListener("DOMContentLoaded", function() {
         executeCopy(summary);
     }
 
-    function downloadCardImage() {
-        const element = document.getElementById("mainCard");
-        if (typeof html2canvas !== "undefined") {
-            html2canvas(element, { backgroundColor: "#121212" }).then((canvas) => {
-                const link = document.createElement("a");
-                link.download = "ges-hesaplama-kart.png";
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-            });
-        } else {
-            alert("Görsel oluşturma kütüphanesi yüklenemedi.");
-        }
-    }
-
     function updateUI() {
         let data = [];
         try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) { data = []; }
@@ -397,4 +380,28 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function copyHistoryItem(index) {
         let data = [];
-        try { data = JSON.par
+        try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) {}
+        if (data[index]) {
+            const d = data[index];
+            executeCopy("ENERGE GES HESAPLAMA KAYDI\n" + d.title + "\n" + d.details);
+        }
+    }
+
+    function deleteHistoryItem(index) {
+        let data = [];
+        try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) {}
+        if (data.length > index) {
+            data.splice(index, 1);
+            try { localStorage.setItem("ges_data", JSON.stringify(data)); } catch(e) {}
+            updateUI();
+        }
+    }
+
+    function clearAll() {
+        if (confirm("Tüm kayıtlar silinsin mi?")) {
+            try { localStorage.removeItem("ges_data"); } catch(e) {}
+            updateUI();
+        }
+    }
+
+    function toggleM
