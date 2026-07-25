@@ -275,13 +275,13 @@ document.addEventListener("DOMContentLoaded", function() {
         const val = document.getElementById("pTip").value;
         const ozelGrup = document.getElementById("grpOzelGenislik");
 
-        if (val === "550") {
+        if (val === "600") {
             document.getElementById("pGen").value = 113.4;
-            document.getElementById("pWatt").value = 550;
+            document.getElementById("pWatt").value = 600;
             if (ozelGrup) ozelGrup.style.display = "none";
-        } else if (val === "585") {
+        } else if (val === "625") {
             document.getElementById("pGen").value = 113.4;
-            document.getElementById("pWatt").value = 585;
+            document.getElementById("pWatt").value = 625;
             if (ozelGrup) ozelGrup.style.display = "none";
         } else if (val === "custom") {
             if (ozelGrup) ozelGrup.style.display = "block";
@@ -370,9 +370,9 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        for (let i = 0; i < data.length; i++) {
-            const d = data[i];
-            const el = document.createElement("div");
+        for (let i = 0; i < boyInputs.length; i++) {
+    const valStr = boyInputs[i].value.trim();
+    const b = valStr === "" ? NaN : parseFloat(valStr);
             el.className = "item";
             el.innerHTML = '<div class="item-title">' + d.title + '</div>' +
                            '<div class="item-sub">' + d.details + '</div>' +
