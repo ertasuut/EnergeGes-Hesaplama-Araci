@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ENERGE - Hesaplama Araçları</title>
+    <!-- Görüntü alma işlemi için html2canvas kütüphanesi eklendi -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
         html, body { width: 100%; min-height: 100vh; background-color: #121212; color: #e0e0e0; }
@@ -57,14 +59,14 @@
 
 <div class="card" id="mainCard">
     <div class="header">
-        <button type="button" class="history-btn" id="btnToggleModal">📒 <span class="badge" id="badgeCount">0</span></button>
+        <button type="button" class="history-btn" id="btnToggleModal" data-html2canvas-ignore>📒 <span class="badge" id="badgeCount">0</span></button>
         <div class="logo-container">
             <img src="./gelogosaydam.png" alt="ENERGE Logo" id="mainLogo" onerror="this.style.display='none'">
         </div>
-        <div class="header-spacer"></div>
+        <div class="header-spacer" data-html2canvas-ignore></div>
     </div>
 
-    <div class="tabs">
+    <div class="tabs" data-html2canvas-ignore>
         <button type="button" class="tab-btn active" id="btnGunes" data-target="gunes">Güneş Paneli</button>
         <button type="button" class="tab-btn" id="btnKosegen" data-target="kosegen">Köşegen</button>
     </div>
@@ -101,10 +103,10 @@
                 <div class="profile-row">
                     <input type="number" class="asik-boy" placeholder="Boy (m)" value="6" step="any">
                     <input type="number" class="asik-adet" placeholder="Adet" value="4">
-                    <button type="button" class="btn-del-row" data-action="remove-row">✕</button>
+                    <button type="button" class="btn-del-row" data-action="remove-row" data-html2canvas-ignore>✕</button>
                 </div>
             </div>
-            <button type="button" class="btn-add-row" id="btnAddRow">＋ Aşık Boyu Ekle</button>
+            <button type="button" class="btn-add-row" id="btnAddRow" data-html2canvas-ignore>＋ Aşık Boyu Ekle</button>
         </div>
 
         <div class="input-group">
@@ -121,7 +123,7 @@
             <div class="result-value" id="outGunesBoy">0 cm</div>
             <div class="result-details" id="outGunesDetay"></div>
             
-            <div class="btn-group">
+            <div class="btn-group" data-html2canvas-ignore>
                 <button type="button" class="action-btn" id="btnSaveData">💾 Kaydet</button>
                 <button type="button" class="action-btn" id="btnCopySummary">📋 Kopyala</button>
             </div>
@@ -149,6 +151,10 @@
             <div>Köşegen (Çapraz)</div>
             <div class="result-value" id="outKosegen">0 cm</div>
         </div>
+    </div>
+    
+    <div style="margin-top: 15px;" data-html2canvas-ignore>
+        <button type="button" class="action-btn" id="btnDownloadCard" style="width: 100%; background: #E87D0A; border-color: #E87D0A;">⬇️ Kartı Görüntü Olarak İndir</button>
     </div>
 
     <div class="footer">ENERGE - Güneş Enerji Sistemleri</div>
@@ -306,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function() {
         row.className = "profile-row";
         row.innerHTML = '<input type="number" class="asik-boy" placeholder="Boy (m)" step="any">' +
                         '<input type="number" class="asik-adet" placeholder="Adet">' +
-                        '<button type="button" class="btn-del-row" data-action="remove-row">✕</button>';
+                        '<button type="button" class="btn-del-row" data-action="remove-row" data-html2canvas-ignore>✕</button>';
         container.appendChild(row);
         runGunes();
     }
@@ -383,78 +389,4 @@ document.addEventListener("DOMContentLoaded", function() {
         try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) {}
         if (data[index]) {
             const d = data[index];
-            executeCopy("ENERGE GES HESAPLAMA KAYDI\n" + d.title + "\n" + d.details);
-        }
-    }
-
-    function deleteHistoryItem(index) {
-        let data = [];
-        try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) {}
-        if (data.length > index) {
-            data.splice(index, 1);
-            try { localStorage.setItem("ges_data", JSON.stringify(data)); } catch(e) {}
-            updateUI();
-        }
-    }
-
-    function clearAll() {
-        if (confirm("Tüm kayıtlar silinsin mi?")) {
-            try { localStorage.removeItem("ges_data"); } catch(e) {}
-            updateUI();
-        }
-    }
-
-    function toggleModal(open) {
-        const modal = document.getElementById("myModal");
-        if (modal) {
-            modal.style.display = open ? "flex" : "none";
-            if (open) updateUI();
-        }
-    }
-
-    document.getElementById("pTip").onchange = panelTipDegisti;
-    document.getElementById("kBirim").onchange = runKosegen;
-    document.getElementById("k1").oninput = runKosegen;
-    document.getElementById("k2").oninput = runKosegen;
-
-    document.getElementById("btnGunes").onclick = () => switchTab("gunes");
-    document.getElementById("btnKosegen").onclick = () => switchTab("kosegen");
-    document.getElementById("btnAddRow").onclick = addProfileRow;
-    document.getElementById("btnSaveData").onclick = saveData;
-    document.getElementById("btnCopySummary").onclick = copyTextSummary;
-
-    document.getElementById("btnToggleModal").onclick = () => toggleModal(true);
-    document.getElementById("btnCloseModal").onclick = () => toggleModal(false);
-    document.getElementById("btnClearAll").onclick = clearAll;
-
-    document.addEventListener("input", function(e) {
-        if (e.target.closest("#secGunes")) {
-            runGunes();
-        }
-    });
-
-    document.addEventListener("click", function(e) {
-        const target = e.target;
-        const action = target.getAttribute("data-action");
-
-        if (action === "remove-row") {
-            const row = target.closest(".profile-row");
-            if (row) {
-                row.parentNode.removeChild(row);
-                runGunes();
-            }
-        } else if (action === "copy-history") {
-            const idx = parseInt(target.getAttribute("data-index"));
-            copyHistoryItem(idx);
-        } else if (action === "delete-history") {
-            const idx = parseInt(target.getAttribute("data-index"));
-            deleteHistoryItem(idx);
-        }
-    });
-
-    runGunes();
-    updateUI();
-});
-</script>
-</body>
-</html>
+            executeCopy("ENERGE GES HESAPLAMA KAYDI\n" + d.title + "\n
