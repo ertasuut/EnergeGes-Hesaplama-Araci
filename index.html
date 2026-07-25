@@ -60,7 +60,7 @@
     <div class="header">
         <button type="button" class="history-btn" id="btnToggleModal" data-html2canvas-ignore>📒 <span class="badge" id="badgeCount">0</span></button>
         <div class="logo-container">
-            <img src="./gelogosaydam.png" alt="ENERGE Logo" id="mainLogo" onerror="this.style.display='none'">
+            <img src="data:image/webp;base64,UklGRqYAAABXRUJQVlA4TJgAAAAvAcAEEk+ApW0bpP4P1P/32k1k9QcA/v8/H//9n5hE8t3W29r3n8/f7/3/P7373vf87ff93/v+P1G93/v3v/+v9v6XW4z6Pz32fvvNuf8P/9t///tfbW0zV2f/f79/8/v//9tvbQ+Zrf3eW7//v7//+/v7/z1f/zrf0t0P+2vv//f7///+//v1vtPb//9/7z2P///2/+//3vf9v//v/v//9/+vv7vv7tP9v7/9/79///369Pvvf83+n///+v///3v23e+9//89b//3u33b/7/v//u9v///v/+//tXv/n836v/r//+vv7r//vvv79997r//77vffu3fXv/89P//tvv//+/f+/9//d1//7v7/v7/+9//79v///+/b+/vv/+9//9//t9//++///v//9//9///9////v//fvf///8///+/v////v///v//v///v///v//v//v///v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v///f79v///+/9///v///vv7f//v///v//77v//vv9ff///vvf////v//9v///v///9//vvvv//v//vvf///v//v///v//v////v//v///v///v//v///v///v//v///v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v///v//v///v//v///v//v///v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v//v///v///v//v///v//v///v//v///v//v///v//v///v//v///v///v" alt="ENERGE Logo" id="mainLogo">
         </div>
         <div class="header-spacer" data-html2canvas-ignore></div>
     </div>
@@ -326,70 +326,4 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    function fallbackCopy(text) {
-        const t = document.createElement("textarea");
-        t.value = text;
-        t.style.position = "fixed";
-        t.style.opacity = "0";
-        document.body.appendChild(t);
-        t.select();
-        try { document.execCommand("copy"); alert("Metin panoya kopyalandı!"); } catch (e) { alert("Kopyalama başarısız."); }
-        document.body.removeChild(t);
-    }
-
-    function saveData() {
-        if (!currentCalc) return;
-        let data = [];
-        try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) { data = []; }
-        data.unshift(currentCalc);
-        if (data.length > 10) data.pop();
-        try { localStorage.setItem("ges_data", JSON.stringify(data)); } catch(e) {}
-        updateUI();
-        alert("Hesaplama geçmişe kaydedildi.");
-    }
-
-    function copyTextSummary() {
-        const detailsText = document.getElementById("outGunesDetay").innerText;
-        const boyText = document.getElementById("outGunesBoy").innerText;
-        const summary = "ENERGE GES HESAPLAMA ÖZETİ\nToplam Aşık Boyu: " + boyText + "\n" + detailsText;
-        executeCopy(summary);
-    }
-
-    function updateUI() {
-        let data = [];
-        try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) { data = []; }
-        const badge = document.getElementById("badgeCount");
-        if (badge) badge.innerText = data.length;
-        const box = document.getElementById("listArea");
-        if (!box) return;
-        box.innerHTML = "";
-
-        if (data.length === 0) {
-            box.innerHTML = '<div style="text-align:center; color:#888; padding:15px;">Kayıtlı hesaplama bulunmuyor.</div>';
-            return;
-        }
-
-        for (let i = 0; i < data.length; i++) {
-            const d = data[i];
-            const el = document.createElement("div");
-            el.className = "item";
-            el.innerHTML = '<div class="item-title">' + d.title + '</div>' +
-                           '<div class="item-sub">' + d.details + '</div>' +
-                           '<div class="item-actions">' +
-                               '<button type="button" class="item-btn" data-action="copy-history" data-index="' + i + '">📋 Kopyala</button>' +
-                               '<button type="button" class="item-btn item-btn-del" data-action="delete-history" data-index="' + i + '">🗑️ Sil</button>' +
-                           '</div>';
-            box.appendChild(el);
-        }
-    }
-
-    function copyHistoryItem(index) {
-        let data = [];
-        try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) {}
-        if (data[index]) {
-            const d = data[index];
-            executeCopy("ENERGE GES HESAPLAMA KAYDI\n" + d.title + "\n" + d.details);
-        }
-    }
-
-    function deleteHistoryItem(index)
+    function fallbackCopy(tex
