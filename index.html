@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hesaplama Araçları</title>
+    <title>ENERGE - Hesaplama Araçları</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
@@ -167,263 +167,291 @@
 </div>
 
 <script>
-(function() {
-    var currentCalc = null;
+// Güvenli başlatıcı: Elementlerin yüklenmesini beklemeden global fonksiyonlar bağlar
+var currentCalc = null;
 
-    function runKosegen() {
-        var u = document.getElementById("kBirim").value;
-        var a = parseFloat(document.getElementById("k1").value) || 0;
-        var b = parseFloat(document.getElementById("k2").value) || 0;
-        var res = document.getElementById("outKosegen");
+function runKosegen() {
+    var u = document.getElementById("kBirim") ? document.getElementById("kBirim").value : "cm";
+    var a = parseFloat(document.getElementById("k1").value) || 0;
+    var b = parseFloat(document.getElementById("k2").value) || 0;
+    var res = document.getElementById("outKosegen");
+    if (res) {
         if (a > 0 && b > 0) {
             res.innerText = Math.sqrt((a * a) + (b * b)).toFixed(2) + " " + u;
         } else {
             res.innerText = "0 " + u;
         }
     }
+}
 
-    function runGunes() {
-        var genislik = parseFloat(document.getElementById("pGen").value) || 0;
-        var watt = parseFloat(document.getElementById("pWatt").value) || 0;
-        var toplamPanel = parseInt(document.getElementById("pAdet").value) || 0;
-        var sira = parseInt(document.getElementById("pSira").value) || 0;
-        var kanat = parseFloat(document.getElementById("pKanat").value) || 0;
-        var ayakAciklik = parseFloat(document.getElementById("pAyak").value) || 0;
+function runGunes() {
+    var genislik = parseFloat(document.getElementById("pGen").value) || 113.4;
+    var watt = parseFloat(document.getElementById("pWatt").value) || 0;
+    var toplamPanel = parseInt(document.getElementById("pAdet").value) || 0;
+    var sira = parseInt(document.getElementById("pSira").value) || 1;
+    var kanat = parseFloat(document.getElementById("pKanat").value) || 0;
+    var ayakAciklik = parseFloat(document.getElementById("pAyak").value) || 0;
 
-        var boyInputs = document.querySelectorAll(".asik-boy");
-        var adetInputs = document.querySelectorAll(".asik-adet");
-        var stokMetreMetraj = 0;
-        var stokListesiMetin = [];
+    var boyInputs = document.querySelectorAll(".asik-boy");
+    var adetInputs = document.querySelectorAll(".asik-adet");
+    var stokMetreMetraj = 0;
+    var stokListesiMetin = [];
 
-        for (var i = 0; i < boyInputs.length; i++) {
-            var b = parseFloat(boyInputs[i].value) || 0;
-            var a = parseInt(adetInputs[i].value) || 0;
-            if (b > 0 && a > 0) {
-                stokMetreMetraj += (b * a);
-                stokListesiMetin.push(a + " ad × " + b + "m");
-            }
-        }
-
-        if (genislik > 0 && toplamPanel > 0 && sira > 0) {
-            var panelYanYana = Math.ceil(toplamPanel / (2 * sira));
-            var toplamAsik = sira * 4;
-            var toplamSonlandirici = sira * 8;
-            var toplamKwp = (toplamPanel * watt) / 1000;
-            
-            var ustSiraPanel = Math.ceil(toplamPanel / (2 * sira));
-            var altSiraPanel = Math.floor(toplamPanel / (2 * sira));
-            
-            var ustBirlesim = Math.max(0, ustSiraPanel - 1);
-            var altBirlesim = Math.max(0, altSiraPanel - 1);
-            
-            var toplamAraTutucu = (ustBirlesim + altBirlesim) * 2 * sira;
-            var isTekSayi = (toplamPanel % 2 !== 0);
-
-            var siraAraBosluk = Math.max(0, panelYanYana - 1);
-            var panelDizilimCm = (panelYanYana * genislik) + (siraAraBosluk * 2) + 10;
-            var toplamAsikBoyuCm = panelDizilimCm + (kanat * 2);
-            var toplamAsikBoyuM = (toplamAsikBoyuCm / 100);
-
-            var toplamGerekenMetrajM = toplamAsikBoyuM * toplamAsik;
-            var farkM = stokMetreMetraj - toplamGerekenMetrajM;
-
-            var ayakCiftiSayisi = 0;
-            if (ayakAciklik > 0) {
-                var aciklikSayisi = Math.ceil(panelDizilimCm / ayakAciklik);
-                ayakCiftiSayisi = (aciklikSayisi + 1) * sira;
-            }
-
-            document.getElementById("outGunesBoy").innerText = toplamAsikBoyuCm.toFixed(1) + " cm (" + toplamAsikBoyuM.toFixed(2) + " m)";
-            
-            var tekSayiNotu = isTekSayi ? ' (Tek sayı panel)' : '';
-            var stokMetni = stokListesiMetin.length > 0 ? stokListesiMetin.join(", ") : "Girilmedi";
-            var metrajDurumu = farkM >= 0 
-                ? '✓ Stok Yeterli (Artan: ' + farkM.toFixed(2) + ' m)' 
-                : '⚠ Stok Yetersiz (Eksik: ' + Math.abs(farkM).toFixed(2) + ' m)';
-
-            var detailHTML = 
-                '• Sistem Toplam Gücü: <strong>' + toplamKwp.toFixed(2) + ' kWp</strong> (' + watt + 'W × ' + toplamPanel + ')<br>' +
-                '• Yan Yana Panel Sayısı: <strong>' + panelYanYana + ' adet</strong><br>' +
-                '• Toplam Aşık Hat Sayısı: <strong>' + toplamAsik + ' hat</strong> (' + sira + ' sıra × 4)<br>' +
-                '• Toplam Net Profil İhtiyacı: <strong>' + toplamGerekenMetrajM.toFixed(2) + ' m</strong><br>' +
-                '• Girilen Aşık Stok: <strong>' + stokMetni + '</strong> (Toplam: ' + stokMetreMetraj.toFixed(2) + ' m)<br>' +
-                '• Durum: <strong>' + metrajDurumu + '</strong><br>' +
-                '• Toplam Sonlandırıcı: <strong>' + toplamSonlandirici + ' adet</strong><br>' +
-                '• Toplam Ara Tutucu: <strong>' + toplamAraTutucu + ' adet</strong>' + tekSayiNotu + '<br>' +
-                '• Gereken Ayak Çifti: <strong>' + ayakCiftiSayisi + ' adet</strong><br>' +
-                '• Çift Taraf Kanat Taşması: <strong>' + (kanat * 2).toFixed(1) + ' cm</strong>';
-
-            document.getElementById("outGunesDetay").innerHTML = detailHTML;
-
-            currentCalc = {
-                title: toplamAsikBoyuCm.toFixed(1) + " cm | " + toplamKwp.toFixed(2) + " kWp",
-                details: detailHTML.replace(/<br>/g, "\n").replace(/<[^>]*>/g, "")
-            };
+    for (var i = 0; i < boyInputs.length; i++) {
+        var b = parseFloat(boyInputs[i].value) || 0;
+        var a = parseInt(adetInputs[i].value) || 0;
+        if (b > 0 && a > 0) {
+            stokMetreMetraj += (b * a);
+            stokListesiMetin.push(a + " ad × " + b + "m");
         }
     }
 
-    function panelTipDegisti() {
-        var val = document.getElementById("pTip").value;
-        var ozelGrup = document.getElementById("grpOzelGenislik");
+    if (genislik > 0 && toplamPanel > 0 && sira > 0) {
+        var panelYanYana = Math.ceil(toplamPanel / (2 * sira));
+        var toplamAsik = sira * 4;
+        var toplamSonlandirici = sira * 8;
+        var toplamKwp = (toplamPanel * watt) / 1000;
+        
+        var ustSiraPanel = Math.ceil(toplamPanel / (2 * sira));
+        var altSiraPanel = Math.floor(toplamPanel / (2 * sira));
+        
+        var ustBirlesim = Math.max(0, ustSiraPanel - 1);
+        var altBirlesim = Math.max(0, altSiraPanel - 1);
+        
+        var toplamAraTutucu = (ustBirlesim + altBirlesim) * 2 * sira;
+        var isTekSayi = (toplamPanel % 2 !== 0);
 
-        if (val === "550") {
-            document.getElementById("pGen").value = 113.4;
-            document.getElementById("pWatt").value = 550;
-            ozelGrup.style.display = "none";
-        } else if (val === "585") {
-            document.getElementById("pGen").value = 113.4;
-            document.getElementById("pWatt").value = 585;
-            ozelGrup.style.display = "none";
-        } else if (val === "custom") {
-            ozelGrup.style.display = "block";
+        var siraAraBosluk = Math.max(0, panelYanYana - 1);
+        var panelDizilimCm = (panelYanYana * genislik) + (siraAraBosluk * 2) + 10;
+        var toplamAsikBoyuCm = panelDizilimCm + (kanat * 2);
+        var toplamAsikBoyuM = (toplamAsikBoyuCm / 100);
+
+        var toplamGerekenMetrajM = toplamAsikBoyuM * toplamAsik;
+        var farkM = stokMetreMetraj - toplamGerekenMetrajM;
+
+        var ayakCiftiSayisi = 0;
+        if (ayakAciklik > 0) {
+            var aciklikSayisi = Math.ceil(panelDizilimCm / ayakAciklik);
+            ayakCiftiSayisi = (aciklikSayisi + 1) * sira;
         }
+
+        var boyOut = document.getElementById("outGunesBoy");
+        if (boyOut) boyOut.innerText = toplamAsikBoyuCm.toFixed(1) + " cm (" + toplamAsikBoyuM.toFixed(2) + " m)";
+        
+        var tekSayiNotu = isTekSayi ? ' (Tek sayı panel)' : '';
+        var stokMetni = stokListesiMetin.length > 0 ? stokListesiMetin.join(", ") : "Girilmedi";
+        var metrajDurumu = farkM >= 0 
+            ? '✓ Stok Yeterli (Artan: ' + farkM.toFixed(2) + ' m)' 
+            : '⚠ Stok Yetersiz (Eksik: ' + Math.abs(farkM).toFixed(2) + ' m)';
+
+        var detailHTML = 
+            '• Sistem Toplam Gücü: <strong>' + toplamKwp.toFixed(2) + ' kWp</strong> (' + watt + 'W × ' + toplamPanel + ')<br>' +
+            '• Yan Yana Panel Sayısı: <strong>' + panelYanYana + ' adet</strong><br>' +
+            '• Toplam Aşık Hat Sayısı: <strong>' + toplamAsik + ' hat</strong> (' + sira + ' sıra × 4)<br>' +
+            '• Toplam Net Profil İhtiyacı: <strong>' + toplamGerekenMetrajM.toFixed(2) + ' m</strong><br>' +
+            '• Girilen Aşık Stok: <strong>' + stokMetni + '</strong> (Toplam: ' + stokMetreMetraj.toFixed(2) + ' m)<br>' +
+            '• Durum: <strong>' + metrajDurumu + '</strong><br>' +
+            '• Toplam Sonlandırıcı: <strong>' + toplamSonlandirici + ' adet</strong><br>' +
+            '• Toplam Ara Tutucu: <strong>' + toplamAraTutucu + ' adet</strong>' + tekSayiNotu + '<br>' +
+            '• Gereken Ayak Çifti: <strong>' + ayakCiftiSayisi + ' adet</strong><br>' +
+            '• Çift Taraf Kanat Taşması: <strong>' + (kanat * 2).toFixed(1) + ' cm</strong>';
+
+        var detayOut = document.getElementById("outGunesDetay");
+        if (detayOut) detayOut.innerHTML = detailHTML;
+
+        currentCalc = {
+            title: toplamAsikBoyuCm.toFixed(1) + " cm | " + toplamKwp.toFixed(2) + " kWp",
+            details: detailHTML.replace(/<br>/g, "\n").replace(/<[^>]*>/g, "")
+        };
+    }
+}
+
+function panelTipDegisti() {
+    var val = document.getElementById("pTip").value;
+    var ozelGrup = document.getElementById("grpOzelGenislik");
+
+    if (val === "550") {
+        document.getElementById("pGen").value = 113.4;
+        document.getElementById("pWatt").value = 550;
+        if (ozelGrup) ozelGrup.style.display = "none";
+    } else if (val === "585") {
+        document.getElementById("pGen").value = 113.4;
+        document.getElementById("pWatt").value = 585;
+        if (ozelGrup) ozelGrup.style.display = "none";
+    } else if (val === "custom") {
+        if (ozelGrup) ozelGrup.style.display = "block";
+    }
+    runGunes();
+}
+
+function switchTab(target) {
+    document.getElementById("secGunes").className = "tab-content";
+    document.getElementById("secKosegen").className = "tab-content";
+    document.getElementById("btnGunes").className = "tab-btn";
+    document.getElementById("btnKosegen").className = "tab-btn";
+
+    if (target === "gunes") {
+        document.getElementById("secGunes").className = "tab-content active";
+        document.getElementById("btnGunes").className = "tab-btn active";
+        runGunes();
+    } else {
+        document.getElementById("secKosegen").className = "tab-content active";
+        document.getElementById("btnKosegen").className = "tab-btn active";
+        runKosegen();
+    }
+}
+
+function addProfileRow() {
+    var container = document.getElementById("asikContainer");
+    var row = document.createElement("div");
+    row.className = "profile-row";
+    row.innerHTML = '<input type="number" class="asik-boy" placeholder="Boy (m)" step="any">' +
+                    '<input type="number" class="asik-adet" placeholder="Adet">' +
+                    '<button type="button" class="btn-del-row" onclick="removeRow(this)">✕</button>';
+    container.appendChild(row);
+    runGunes();
+}
+
+function removeRow(btn) {
+    var row = btn.closest(".profile-row");
+    if (row) {
+        row.parentNode.removeChild(row);
         runGunes();
     }
+}
 
-    function switchTab(target) {
-        document.getElementById("secGunes").className = "tab-content";
-        document.getElementById("secKosegen").className = "tab-content";
-        document.getElementById("btnGunes").className = "tab-btn";
-        document.getElementById("btnKosegen").className = "tab-btn";
+function executeCopy(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function() {
+            alert("Metin panoya kopyalandı!");
+        }).catch(function() { fallbackCopy(text); });
+    } else {
+        fallbackCopy(text);
+    }
+}
 
-        if (target === "gunes") {
-            document.getElementById("secGunes").className = "tab-content active";
-            document.getElementById("btnGunes").className = "tab-btn active";
+function fallbackCopy(text) {
+    var t = document.createElement("textarea");
+    t.value = text;
+    t.style.position = "fixed";
+    t.style.opacity = "0";
+    document.body.appendChild(t);
+    t.select();
+    try { document.execCommand("copy"); alert("Metin panoya kopyalandı!"); } catch (e) { alert("Kopyalama başarısız."); }
+    document.body.removeChild(t);
+}
+
+function saveData() {
+    if (!currentCalc) return;
+    var data = [];
+    try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) { data = []; }
+    data.unshift(currentCalc);
+    if (data.length > 10) data.pop();
+    try { localStorage.setItem("ges_data", JSON.stringify(data)); } catch(e) {}
+    updateUI();
+    alert("Hesaplama geçmişe kaydedildi.");
+}
+
+function copyTextSummary() {
+    var detailsText = document.getElementById("outGunesDetay").innerText;
+    var boyText = document.getElementById("outGunesBoy").innerText;
+    var summary = "ENERGE GES HESAPLAMA ÖZETİ\nToplam Aşık Boyu: " + boyText + "\n" + detailsText;
+    executeCopy(summary);
+}
+
+function downloadCardImage() {
+    var element = document.getElementById("mainCard");
+    if (typeof html2canvas !== "undefined") {
+        html2canvas(element, { backgroundColor: "#121212" }).then(function(canvas) {
+            var link = document.createElement("a");
+            link.download = "ges-hesaplama-kart.png";
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        });
+    } else {
+        alert("Görsel oluşturma kütüphanesi yüklenemedi.");
+    }
+}
+
+function updateUI() {
+    var data = [];
+    try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) { data = []; }
+    var badge = document.getElementById("badgeCount");
+    if (badge) badge.innerText = data.length;
+    var box = document.getElementById("listArea");
+    if (!box) return;
+    box.innerHTML = "";
+
+    if (data.length === 0) {
+        box.innerHTML = '<div style="text-align:center; color:#888; padding:15px;">Kayıtlı hesaplama bulunmuyor.</div>';
+        return;
+    }
+
+    for (var i = 0; i < data.length; i++) {
+        (function(index) {
+            var d = data[index];
+            var el = document.createElement("div");
+            el.className = "item";
+            el.innerHTML = '<div class="item-title">' + d.title + '</div>' +
+                           '<div class="item-sub">' + d.details + '</div>' +
+                           '<div class="item-actions"><button type="button" class="item-btn" onclick="copyHistoryItem(' + index + ')">📋 Kopyala</button></div>';
+            box.appendChild(el);
+        })(i);
+    }
+}
+
+function copyHistoryItem(index) {
+    var data = [];
+    try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) {}
+    if (data[index]) {
+        var d = data[index];
+        executeCopy("ENERGE GES HESAPLAMA KAYDI\n" + d.title + "\n" + d.details);
+    }
+}
+
+function clearAll() {
+    if (confirm("Tüm kayıtlar silinsin mi?")) {
+        try { localStorage.removeItem("ges_data"); } catch(e) {}
+        updateUI();
+    }
+}
+
+// Olay tetikleyicilerini doğrudan HTML elementlerine `oninput` / `onchange` / `onclick` ile bağlayarak event kilitlenmelerini tamamen önlüyoruz.
+window.addEventListener("DOMContentLoaded", function() {
+    // Input değişikliklerini dinlemek için genel event delegation
+    document.addEventListener("input", function(e) {
+        if (e.target.id === "pGen" || e.target.id === "pWatt" || e.target.id === "pAdet" || 
+            e.target.id === "pSira" || e.target.id === "pKanat" || e.target.id === "pAyak" ||
+            e.target.classList.contains("asik-boy") || e.target.classList.contains("asik-adet")) {
             runGunes();
-        } else {
-            document.getElementById("secKosegen").className = "tab-content active";
-            document.getElementById("btnKosegen").className = "tab-btn active";
+        } else if (e.target.id === "k1" || e.target.id === "k2") {
             runKosegen();
         }
-    }
+    });
 
-    function addProfileRow() {
-        var container = document.getElementById("asikContainer");
-        var row = document.createElement("div");
-        row.className = "profile-row";
-        
-        row.innerHTML = '<input type="number" class="asik-boy" placeholder="Boy (m)" step="any">' +
-                        '<input type="number" class="asik-adet" placeholder="Adet">' +
-                        '<button type="button" class="btn-del-row">✕</button>';
-        
-        container.appendChild(row);
-        runGunes();
-    }
-
-    function executeCopy(text) {
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(text).then(function() {
-                alert("Metin panoya kopyalandı!");
-            }).catch(function() {
-                fallbackCopy(text);
-            });
-        } else {
-            fallbackCopy(text);
+    document.addEventListener("change", function(e) {
+        if (e.target.id === "pTip") {
+            panelTipDegisti();
+        } else if (e.target.id === "kBirim") {
+            runKosegen();
         }
-    }
+    });
 
-    function fallbackCopy(text) {
-        var t = document.createElement("textarea");
-        t.value = text;
-        t.style.position = "fixed";
-        t.style.opacity = "0";
-        document.body.appendChild(t);
-        t.select();
-        try {
-            document.execCommand("copy");
-            alert("Metin panoya kopyalandı!");
-        } catch (e) {
-            alert("Kopyalama başarısız oldu.");
-        }
-        document.body.removeChild(t);
-    }
+    // Buton dinleyicileri
+    document.getElementById("btnGunes").onclick = function() { switchTab("gunes"); };
+    document.getElementById("btnKosegen").onclick = function() { switchTab("kosegen"); };
+    document.getElementById("btnAddProfile").onclick = addProfileRow;
+    document.getElementById("btnSave").onclick = saveData;
+    document.getElementById("btnCopy").onclick = copyTextSummary;
+    document.getElementById("btnDownload").onclick = downloadCardImage;
+    document.getElementById("btnHistory").onclick = function() { document.getElementById("myModal").style.display = "flex"; };
+    document.getElementById("btnCloseModal").onclick = function() { document.getElementById("myModal").style.display = "none"; };
+    document.getElementById("btnClearAll").onclick = clearAll;
 
-    function saveData() {
-        if (!currentCalc) return;
-        var data = [];
-        try {
-            data = JSON.parse(localStorage.getItem("ges_data") || "[]");
-        } catch(e) { data = []; }
-        
-        data.unshift(currentCalc);
-        if (data.length > 10) data.pop();
-        
-        try {
-            localStorage.setItem("ges_data", JSON.stringify(data));
-        } catch(e) {}
-        
-        updateUI();
-        alert("Hesaplama geçmişe kaydedildi.");
-    }
-
-    function copyTextSummary() {
-        var detailsText = document.getElementById("outGunesDetay").innerText;
-        var boyText = document.getElementById("outGunesBoy").innerText;
-        var summary = "ENERGE GES HESAPLAMA ÖZETİ\n" +
-                      "Toplam Aşık Boyu: " + boyText + "\n" +
-                      detailsText;
-        executeCopy(summary);
-    }
-
-    function downloadCardImage() {
-        var element = document.getElementById("mainCard");
-        if (typeof html2canvas !== "undefined") {
-            html2canvas(element, { backgroundColor: "#121212" }).then(function(canvas) {
-                var link = document.createElement("a");
-                link.download = "ges-hesaplama-kart.png";
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-            });
-        } else {
-            alert("Görsel oluşturma kütüphanesi yüklenemedi.");
-        }
-    }
-
-    function updateUI() {
-        var data = [];
-        try {
-            data = JSON.parse(localStorage.getItem("ges_data") || "[]");
-        } catch(e) { data = []; }
-
-        document.getElementById("badgeCount").innerText = data.length;
-        var box = document.getElementById("listArea");
-        box.innerHTML = "";
-
-        if (data.length === 0) {
-            box.innerHTML = '<div style="text-align:center; color:#888; padding:15px;">Kayıtlı hesaplama bulunmuyor.</div>';
-            return;
-        }
-
-        for (var i = 0; i < data.length; i++) {
-            (function(index) {
-                var d = data[index];
-                var el = document.createElement("div");
-                el.className = "item";
-                el.innerHTML = 
-                    '<div class="item-title">' + d.title + '</div>' +
-                    '<div class="item-sub">' + d.details + '</div>' +
-                    '<div class="item-actions">' +
-                        '<button type="button" class="item-btn btn-copy-item">📋 Kopyala</button>' +
-                    '</div>';
-                
-                el.querySelector(".btn-copy-item").addEventListener("click", function() {
-                    var text = "ENERGE GES HESAPLAMA KAYDI\n" + d.title + "\n" + d.details;
-                    executeCopy(text);
-                });
-
-                box.appendChild(el);
-            })(i);
-        }
-    }
-
-    function clearAll() {
-        if (confirm("Tüm kayıtlar silinsin mi?")) {
-            try {
-                localStorage.removeItem("ges_data");
-            } catch(e) {}
-            updateUI();
-        }
-    }
-
-    function openModal() { document.getElementById("myModal").style.display = "flex"; }
-    function closeModal() { docu
+    // İlk hesaplamayı tetikle
+    runGunes();
+    updateUI();
+});
+</script>
+</body>
+</html>
