@@ -16,8 +16,8 @@
         .history-btn { background: #2a2a2a; border: 1px solid #3a3a3a; color: #E87D0A; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; font-size: 1.2rem; position: relative; display: flex; justify-content: center; align-items: center; }
         .badge { position: absolute; top: -5px; right: -5px; background: #E87D0A; color: #fff; font-size: 0.7rem; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
         
-        .logo-container { flex-grow: 1; text-align: center; }
-        .logo-container img { max-width: 140px; height: auto; display: inline-block; }
+        .logo-container { flex-grow: 1; text-align: center; display: flex; justify-content: center; align-items: center; }
+        .logo-img { max-height: 35px; width: auto; object-fit: contain; }
         .header-spacer { width: 40px; }
 
         .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -60,7 +60,7 @@
     <div class="header">
         <button type="button" class="history-btn" id="btnToggleModal" data-html2canvas-ignore>📒 <span class="badge" id="badgeCount">0</span></button>
         <div class="logo-container">
-            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 45'><text x='10' y='32' font-family='sans-serif' font-weight='900' font-size='28' fill='%23E87D0A'>ENERGE</text></svg>" alt="ENERGE Logo" id="mainLogo">
+            <img src="gelogosaydam.png" alt="ENERGE" class="logo-img" onerror="this.replaceWith(Object.assign(document.createElement('div'), {innerText: 'ENERGE', style: 'font-size: 1.6rem; font-weight: 900; color: #E87D0A; letter-spacing: 1px;'}))">
         </div>
         <div class="header-spacer" data-html2canvas-ignore></div>
     </div>
