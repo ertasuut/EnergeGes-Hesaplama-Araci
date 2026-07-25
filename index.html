@@ -320,4 +320,172 @@ document.addEventListener("DOMContentLoaded", function() {
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(text).then(() => {
                 alert("Metin panoya kopyalandı!");
+        }).catch(() => { fallbackCopy(text); });
+        } else {
+            fallbackCopy(text);
+        }
+    }
+
+    function fallbackCopy(text) {
+        const t = document.createElement("textarea");
+        t.value = text;
+        t.style.position = "fixed";
+        t.style.opacity = "0";
+        document.body.appendChild(t);
+        t.select();
+        try { document.execCommand("copy"); alert("Metin panoya kopyalandı!"); } catch (e) { alert("Kopyalama başarısız."); }
+        document.body.removeChild(t);
+    }
+
+    function saveData() {
+        if (!currentCalc) return;
+        let data = [];
+        try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) { data = []; }
+        data.unshift(currentCalc);
+        if (data.length > 10) data.pop();
+        try { localStorage.setItem("ges_data", JSON.stringify(data)); } catch(e) {}
+        updateUI();
+        alert("Hesaplama geçmişe kaydedildi.");
+    }
+
+    function copyTextSummary() {
+        const detailsText = document.getElementById("outGunesDetay").innerText;
+        const boyText = document.getElementById("outGunesBoy").innerText;
+        const summary = "ENERGE GES HESAPLAMA ÖZETİ\nToplam Aşık Boyu: " + boyText + "\n" + detailsText;
+        executeCopy(summary);
+    }
+
+    function updateUI() {
+        let data = [];
+        try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) { data = []; }
+        const badge = document.getElementById("badgeCount");
+        if (badge) badge.innerText = data.length;
+        const box = document.getElementById("listArea");
+        if (!box) return;
+        box.innerHTML = "";
+
+        if (data.length === 0) {
+            box.innerHTML = '<div style="text-align:center; color:#888; padding:15px;">Kayıtlı hesaplama bulunmuyor.</div>';
+            return;
+        }
+
+        for (let i = 0; i < data.length; i++) {
+            const d = data[i];
+            const el = document.createElement("div");
+            el.className = "item";
+            el.innerHTML = '<div class="item-title">' + d.title + '</div>' +
+                           '<div class="item-sub">' + d.details + '</div>' +
+                           '<div class="item-actions">' +
+                               '<button type="button" class="item-btn" data-action="copy-history" data-index="' + i + '">📋 Kopyala</button>' +
+                               '<button type="button" class="item-btn item-btn-del" data-action="delete-history" data-index="' + i + '">🗑️ Sil</button>' +
+                           '</div>';
+            box.appendChild(el);
+        }
+    }
+
+    function copyHistoryItem(index) {
+        let data = [];
+        try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) {}
+        if (data[index]) {
+            const d = data[index];
+            executeCopy("ENERGE GES HESAPLAMA KAYDI\n" + d.title + "\n" + d.details);
+        }
+    }
+
+    function deleteHistoryItem(index) {
+        let data = [];
+        try { data = JSON.parse(localStorage.getItem("ges_data") || "[]"); } catch(e) {}
+        if (data.length > index) {
+            data.splice(index, 1);
+            try { localStorage.setItem("ges_data", JSON.stringify(data)); } catch(e) {}
+            updateUI();
+        }
+    }
+
+    function clearAll() {
+        if (confirm("Tüm kayıtlar silinsin mi?")) {
+            try { localStorage.removeItem("ges_data"); } catch(e) {}
+            updateUI();
+        }
+    }
+
+    function toggleModal(open) {
+        const modal = document.getElementById("myModal");
+        if (modal) {
+            modal.style.display = open ? "flex" : "none";
+            if (open) updateUI();
+        }
+    }
+    
+    function downloadCardImage() {
+        const btn = document.getElementById("btnDownloadCard");
+        const originalText = btn.innerText;
+        btn.innerText = "⏳ Hazırlanıyor...";
         
+        const card = document.getElementById("mainCard");
+        
+        html2canvas(card, {
+            backgroundColor: "#1e1e1e",
+            scale: 2,
+            logging: false,
+            useCORS: true
+        }).then(canvas => {
+            const link = document.createElement("a");
+            link.download = "ENERGE_Hesaplama.png";
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            btn.innerText = originalText;
+        }).catch(() => {
+            alert("Görüntü oluşturulamadı.");
+            btn.innerText = originalText;
+        });
+    }
+
+    document.getElementById("pTip").onchange = panelTipDegisti;
+    document.getElementById("kBirim").onchange = runKosegen;
+    document.getElementById("k1").oninput = runKosegen;
+    document.getElementById("k2").oninput = runKosegen;
+
+    document.getElementById("btnGunes").onclick = () => switchTab("gunes");
+    document.getElementById("btnKosegen").onclick = () => switchTab("kosegen");
+    document.getElementById("btnAddRow").onclick = addProfileRow;
+    document.getElementById("btnSaveData").onclick = saveData;
+    document.getElementById("btnCopySummary").onclick = copyTextSummary;
+
+    document.getElementById("btnToggleModal").onclick = () => toggleModal(true);
+    document.getElementById("btnCloseModal").onclick = () => toggleModal(false);
+    document.getElementById("btnClearAll").onclick = clearAll;
+    
+    document.getElementById("btnDownloadCard").onclick = downloadCardImage;
+
+    document.addEventListener("input", function(e) {
+        if (e.target.closest("#secGunes")) {
+            runGunes();
+        }
+    });
+
+    document.addEventListener("click", function(e) {
+        const target = e.target;
+        const action = target.getAttribute("data-action");
+
+        if (action === "remove-row") {
+            const row = target.closest(".profile-row");
+            if (row) {
+                row.parentNode.removeChild(row);
+                runGunes();
+            }
+        } else if (action === "copy-history") {
+            const idx = parseInt(target.getAttribute("data-index"));
+            copyHistoryItem(idx);
+        } else if (action === "delete-history") {
+            const idx = parseInt(target.getAttribute("data-index"));
+            deleteHistoryItem(idx);
+        }
+    });
+
+    runGunes();
+    updateUI();
+});
+</script>
+</body>
+</html>
