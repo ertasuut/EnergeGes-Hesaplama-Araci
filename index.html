@@ -404,5 +404,57 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    function toggleM
-        </script>
+    function toggleModal(open) {
+        const modal = document.getElementById("myModal");
+        if (modal) {
+            modal.style.display = open ? "flex" : "none";
+            if (open) updateUI();
+        }
+    }
+
+    document.getElementById("pTip").onchange = panelTipDegisti;
+    document.getElementById("kBirim").onchange = runKosegen;
+    document.getElementById("k1").oninput = runKosegen;
+    document.getElementById("k2").oninput = runKosegen;
+
+    document.getElementById("btnGunes").onclick = () => switchTab("gunes");
+    document.getElementById("btnKosegen").onclick = () => switchTab("kosegen");
+    document.getElementById("btnAddRow").onclick = addProfileRow;
+    document.getElementById("btnSaveData").onclick = saveData;
+    document.getElementById("btnCopySummary").onclick = copyTextSummary;
+
+    document.getElementById("btnToggleModal").onclick = () => toggleModal(true);
+    document.getElementById("btnCloseModal").onclick = () => toggleModal(false);
+    document.getElementById("btnClearAll").onclick = clearAll;
+
+    document.addEventListener("input", function(e) {
+        if (e.target.closest("#secGunes")) {
+            runGunes();
+        }
+    });
+
+    document.addEventListener("click", function(e) {
+        const target = e.target;
+        const action = target.getAttribute("data-action");
+
+        if (action === "remove-row") {
+            const row = target.closest(".profile-row");
+            if (row) {
+                row.parentNode.removeChild(row);
+                runGunes();
+            }
+        } else if (action === "copy-history") {
+            const idx = parseInt(target.getAttribute("data-index"));
+            copyHistoryItem(idx);
+        } else if (action === "delete-history") {
+            const idx = parseInt(target.getAttribute("data-index"));
+            deleteHistoryItem(idx);
+        }
+    });
+
+    runGunes();
+    updateUI();
+});
+</script>
+</body>
+</html>
